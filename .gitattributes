@@ -1,0 +1,55 @@
+# Default: normalize text files to LF
+* text=auto eol=lf
+
+# Java / JVM sources
+*.java          text diff=java
+*.kt            text diff=kotlin
+*.kts           text diff=kotlin
+*.groovy        text diff=java
+*.scala         text diff=java
+*.gradle        text diff=java
+*.gradle.kts    text diff=kotlin
+
+# Web / config / docs
+*.css           text diff=css
+*.scss          text diff=css
+*.sass          text
+*.htm           text diff=html
+*.html          text diff=html
+*.js            text
+*.ts            text
+*.json          text
+*.yml           text
+*.yaml          text
+*.xml           text
+*.xhtml         text
+*.properties    text
+*.md            text
+*.adoc          text
+*.sql           text
+
+# Wrapper scripts
+mvnw            text eol=lf
+gradlew         text eol=lf
+*.sh            text eol=lf
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+*.ps1           text eol=crlf
+
+# Binaries
+*.class         binary
+*.jar           binary
+*.war           binary
+*.ear           binary
+*.jks           binary
+*.dll           binary
+*.so            binary
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.webp          binary
+*.ico           binary
+*.pdf           binary
+*.zip           binary
+*.7z            binary

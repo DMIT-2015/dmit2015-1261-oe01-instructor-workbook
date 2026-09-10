@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html">
+<f:view>
+    <h:head>
+        <title>Hello JSF World</title>
+    </h:head>
+    <h:body>
+
+        <h:messages id="messages" />
+
+        <h:form>
+            <h:outputLabel for="userInput"
+                           value="Your name"/>
+            <h:inputText id="userInput"
+                         value="#{helloBean.userInput}" />
+
+            <h:commandButton value="Submit"
+                            action="#{helloBean.onSubmit()}"/>
+
+            <h:outputText value="#{helloBean.message}" />
+
+        </h:form>
+
+    </h:body>
+</f:view>
+</html>

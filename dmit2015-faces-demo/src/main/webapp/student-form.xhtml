@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html
+      xmlns:p="primefaces"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns="http://www.w3.org/1999/xhtml">
+<h:head>
+    <meta charset="UTF-8"/>
+    <title>Student Registration Form</title>
+</h:head>
+<h:body>
+    <h:form>
+        <p:messages showDetail="true" />
+
+        <p:panel header="Student Registration">
+
+            <p:outputLabel for="fullName" value="Full Name" />
+            <p:inputText id="fullName"
+                         value="#{studentFormBean.fullName}"
+                         required="true"
+                         requiredMessage="Full name is required" />
+            <br />
+            <br />
+
+            <p:outputLabel for="program" value="Propgram" />
+            <p:selectOneMenu id="program"
+                             value="#{studentFormBean.program}"
+                             required="true"
+                             requiredMessage="Program is required">
+                <f:selectItem itemLabel="Select Program"
+                              itemValue=""
+                              noSelectionOption="true" />
+                <f:selectItem itemLabel="Digital Media and IT"
+                              itemValue="DMIT" />
+                <f:selectItem itemLabel="Software Development"
+                              itemValue="SDEV" />
+            </p:selectOneMenu>
+            <br />
+            <br />
+            <p:selectBooleanCheckbox id="fullTime"
+                                     value="#{studentFormBean.fullTime}" />
+            <p:outputLabel for="fullTime"
+                           value="Full Time Student"
+                           />
+            <br />
+            <br />
+            <p:commandButton
+                    value="Submit"
+                    action="#{studentFormBean.submit()}"
+                    update="@form"
+                    process="@form" />
+
+            <h:outputText
+                value="Succesful submission: #{studentFormBean.submissionCount}"
+                />
+
+        </p:panel>
+    </h:form>
+</h:body>
+</html>

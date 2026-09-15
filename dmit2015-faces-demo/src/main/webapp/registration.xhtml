@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="primefaces">
+<f:view>
+    <h:head>
+        <title>Registration</title>
+    </h:head>
+    <h:body>
+        <h1>Registration</h1>
+
+        <h:form>
+            <p:messages />
+            <p:inputText required="true" />
+
+            <p:commandButton value="Submit"
+                             action="#{registrationView.submit()}"
+                             update="@form"
+                             />
+        </h:form>
+
+    </h:body>
+</f:view>
+</html>

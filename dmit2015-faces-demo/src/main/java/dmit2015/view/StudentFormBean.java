@@ -1,8 +1,10 @@
 package dmit2015.view;
 
+import dmit2015.model.StudentInfo;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.io.Serializable;
@@ -13,17 +15,25 @@ public class StudentFormBean implements Serializable {
 
     private int submissionCount;    // getter
 
-    private String fullName;    // getter/setter
-    private String program;     // getter/setter
-    private boolean fullTime;   // getter/setter
+    private StudentInfo studentInfo = new StudentInfo();    // getter
+
+    @Inject
+    private StudentInfoSession studentInfoSession;
+
+    public void removeStudent(StudentInfo existingStudent) {
+        studentInfoSession.remove(existingStudent);
+    }
 
     public void submit() {
         submissionCount++;
+
+        studentInfoSession.add(studentInfo);
+
         String messageDetail = String.format(
                 "Full name:%s, Program: %s, FullTime: %s",
-                fullName,
-                program,
-                fullTime ? "Yes" : "No");
+                studentInfo.getFullName(),
+                studentInfo.getProgram(),
+                studentInfo.isFullTime() ? "Yes" : "No");
         FacesMessage message = new FacesMessage(
                 FacesMessage.SEVERITY_INFO,
                 "Form Submitted",
@@ -31,8 +41,7 @@ public class StudentFormBean implements Serializable {
         );
         FacesContext.getCurrentInstance()
                 .addMessage(null, message);
-        fullName = null;
-        program = null;
+        studentInfo = new StudentInfo();
 
     }
 
@@ -41,27 +50,8 @@ public class StudentFormBean implements Serializable {
         return submissionCount;
     }
 
-    public String getFullName() {
-        return fullName;
+    public StudentInfo getStudentInfo() {
+        return studentInfo;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getProgram() {
-        return program;
-    }
-
-    public void setProgram(String program) {
-        this.program = program;
-    }
-
-    public boolean isFullTime() {
-        return fullTime;
-    }
-
-    public void setFullTime(boolean fullTime) {
-        this.fullTime = fullTime;
-    }
 }

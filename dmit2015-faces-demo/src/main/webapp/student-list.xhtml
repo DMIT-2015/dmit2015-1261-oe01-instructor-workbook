@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="primefaces"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html">
+<f:view>
+    <h:head>Student List</h:head>
+    <h:body>
+        <h1>Student List</h1>
+
+        <h:form>
+            <p:dataTable id="dataTable"
+                         value="#{studentInfoSession.students}"
+                         var="currentStudent">
+                <p:column headerText="Full Name">
+                    <h:outputText value="#{currentStudent.fullName}" />
+                </p:column>
+
+                <p:column headerText="Program">
+                    <h:outputText value="#{currentStudent.program}" />
+                </p:column>
+
+                <p:column headerText="Full Time">
+                    <p:selectBooleanCheckbox value="#{currentStudent.fullTime}"
+                                             disabled="disable" />
+                </p:column>
+
+                <p:column headerText="Action">
+                    <p:commandButton value="Remove"
+                                     action="#{studentFormBean.removeStudent(currentStudent)}"
+                                     process="@this"
+                                     update="dataTable" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</f:view>
+</html>

@@ -57,6 +57,17 @@
                               <p:menuitem value="Create" icon="pi pi-plus" outcome="/students/create"/>
                             </p:submenu>
                             -->
+
+                            <c:if test="${empty firebaseAuthSignInSession.username}">
+                                <p:menuitem
+                                        value="Login"
+                                        action="/firebaseAuthSignIn" />
+                            </c:if>
+                            <c:if test="${not empty firebaseAuthSignInSession.username}">
+                                <p:menuitem
+                                        value="Logout #{firebaseAuthSignInSession.username}"
+                                        action="#{facesLogout.submit}" />
+                            </c:if>
                         </p:menubar>
                     </ui:insert>
                 </h:form>

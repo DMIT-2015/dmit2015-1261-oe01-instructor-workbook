@@ -20,6 +20,10 @@
               value=".Students-table-header { display: flex; align-items:center; justify-content: space-between; flex-wrap: wrap; }"/>
 
     <ui:define name="maincontent">
+        <f:metadata>
+            <f:viewAction action="#{firebaseAuthSignInSession.checkForToken}" />
+        </f:metadata>
+
 
         <div class="card">
             <h:form id="form">

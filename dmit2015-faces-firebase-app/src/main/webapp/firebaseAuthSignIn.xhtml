@@ -1,0 +1,60 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:faces="jakarta.faces"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:pt="jakarta.faces.passthrough"
+        xmlns:cc="jakarta.faces.composite"
+        xmlns:c="jakarta.tags.core"
+        xmlns:fn="jakarta.tags.functions"
+        xmlns:o="omnifaces"
+        xmlns:p="primefaces"
+        template="/WEB-INF/faces-templates/layout.xhtml"
+>
+
+    <ui:param name="title" value="Firebase Login"/>
+
+    <ui:define name="maincontent">
+        <c:if test="#{not empty firebaseAuthSignInSession.username}">
+            <p>Logged-in as #{firebaseAuthSignInSession.username}</p>
+        </c:if>
+
+        <c:if test="#{empty firebaseAuthSignInSession.username}">
+            <h1>Sign in</h1>
+
+            <h:form name="loginForm">
+                <p:focus context="panel"/>
+
+                <h2 class="form-signin-heading">Please sign in</h2>
+
+                <h:panelGrid id="panel" columns="3" cellpadding="7">
+
+                    <p:outputLabel for="username" value="Username" />
+                    <p:inputText id="username"
+                                 placeholder="username"
+                                 required="true"
+                                 value="#{firebaseAuthSignIn.username}">
+                    </p:inputText>
+                    <p:message for="username" />
+
+                    <p:outputLabel for="password" value="password" />
+                    <p:password id="password"
+                                placeholder="Password"
+                                required="true"
+                                value="#{firebaseAuthSignIn.password}">
+                    </p:password>
+                    <p:message for="password" />
+                </h:panelGrid>
+
+                <p:commandButton value="Login"
+                                 action="#{firebaseAuthSignIn.submit()}"
+                                 icon="pi pi-sign-in"
+                                 ajax="false"/>
+
+            </h:form>
+
+        </c:if>
+    </ui:define>
+
+</ui:composition>

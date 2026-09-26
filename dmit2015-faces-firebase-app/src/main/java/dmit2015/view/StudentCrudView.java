@@ -13,8 +13,6 @@ import org.omnifaces.util.Messages;
 import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -27,7 +25,8 @@ public class StudentCrudView implements Serializable {
 
     @Inject
 //    @Named("memoryStudentService")
-    @Named("firebaseHttpClientStudentService")
+//    @Named("firebaseHttpClientStudentService")
+    @Named("firebaseMultiTenantHttpClientStudentService")
     private StudentService studentService;
 
     /**

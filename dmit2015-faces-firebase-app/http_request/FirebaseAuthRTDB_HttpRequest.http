@@ -1,0 +1,113 @@
+### Sign in to Firebase Auth
+#Run this request first.
+# This request returns localId and idToken.
+# localId identifies the signed-in Firebase user.
+# idToken is used to authenticate later Firebase Realtime Database requests.
+# The response handler saves both values as global HTTP Client variables.
+
+@firebaseApiKey = YourOwnFirebaseAppApiKey
+
+POST https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={{firebaseApiKey}}
+Content-Type: application/json
+
+{
+  "email": "yourOwnAccount",
+  "password": "s",
+  "returnSecureToken": true
+}
+
+> {%
+    client.global.set("localId", response.body.localId);
+    client.global.set("idToken", response.body.idToken);
+
+    client.log("localId = " + response.body.localId);
+    client.log("idToken stored for later requests.");
+%}
+
+### Sign using user2
+
+POST https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={{firebaseApiKey}}
+Content-Type: application/json
+
+{
+  "email": "user02@dmit2015.ca",
+  "password": "Password2015",
+  "returnSecureToken": true
+}
+
+> {%
+    client.global.set("localId2", response.body.localId);
+    client.global.set("idToken2", response.body.idToken);
+
+    client.log("localId2 = " + response.body.localId);
+    client.log("idToken2 stored for later requests.");
+%}
+
+### Firebase Realtime Database configuration
+# Firebase Realtime Database stores JSON data as a JSON tree.
+# This template stores data under the signed-in user's localId.
+# This creates a multi-tenant path where each user reads and writes only their own data.
+#
+# Example path after sign-in:
+# multi_tenant_data/Student/{{localId}}
+
+@firebaseBaseUri = https://dmit2015-1261-oe01-swunait-default-rtdb.firebaseio.com
+@domainModelName = Student
+@jsonDataPath = multi_tenant_data/{{domainModelName}}/{{localId}}
+@idValue = new123
+
+### Create or replace JSON data using an explicit id
+# PUT writes data to the exact path.
+# If data already exists at this path, the full object is replaced.
+# The idToken is passed using the Firebase auth query parameter.
+
+PUT {{firebaseBaseUri}}/{{jsonDataPath}}/{{idValue}}.json?auth={{idToken}}
+Content-Type: application/json
+
+{
+  "id": "{{idValue}}",
+  "firstName": "Tyler",
+  "lastName": "Hatch"
+}
+
+### Read one JSON object by explicit id
+# This reads the object stored at:
+# multi_tenant_data/domainModelName/localId/idValue
+
+GET {{firebaseBaseUri}}/{{jsonDataPath}}/{{idValue}}.json?auth={{idToken}}
+
+### Read all JSON objects for the signed-in user and domain model
+# This reads all objects stored under:
+# multi_tenant_data/domainModelName/localId
+
+GET {{firebaseBaseUri}}/{{jsonDataPath}}.json?auth={{idToken}}
+
+### Replace the full JSON object
+# PUT replaces the full object at the specified path.
+# Any properties not included in the request body are removed.
+
+PUT {{firebaseBaseUri}}/{{jsonDataPath}}/{{idValue}}.json?auth={{idToken}}
+Content-Type: application/json
+
+{
+  "id": "{{idValue}}",
+  "propertyName1": "updatedProperty1Value",
+  "propertyName2": "updatedProperty2Value"
+}
+
+### Update part of a JSON object
+# PATCH updates only the specified properties.
+# Existing properties not included in the request body are preserved.
+
+PATCH {{firebaseBaseUri}}/{{jsonDataPath}}/{{idValue}}.json?auth={{idToken}}
+Content-Type: application/json
+
+{
+  "propertyName1": "newValue"
+}
+
+### Delete one JSON object by explicit id
+# DELETE removes the object stored at:
+# multi_tenant_data/domainModelName/localId/idValue
+
+DELETE {{firebaseBaseUri}}/{{jsonDataPath}}/{{idValue}}.json?auth={{idToken}}

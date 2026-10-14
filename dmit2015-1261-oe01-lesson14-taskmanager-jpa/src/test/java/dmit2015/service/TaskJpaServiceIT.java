@@ -1,6 +1,7 @@
 package dmit2015.service;
 
 import dmit2015.model.Task;
+import dmit2015.model.TaskPriority;
 import jakarta.annotation.Resource;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -13,6 +14,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit5.container.annotation.ArquillianTest;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -29,6 +32,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Transactional(TransactionMode.ROLLBACK)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ArquillianTest
@@ -72,31 +76,6 @@ public class TaskJpaServiceIT { // The class must be declared as public
     @Named("jakartaPersistenceTaskService")
     private TaskService taskService;
 
-    @Resource
-    private UserTransaction beanManagedTransaction;
-
-    @BeforeAll
-    static void beforeAllTests() {
-        // code to execute before all tests in the current test class
-    }
-
-    @AfterAll
-    static void afterAllTests() {
-        // code to execute after all tests in the current test class
-    }
-
-    @BeforeEach
-    void beforeEachTestMethod() throws SystemException, NotSupportedException {
-        // Start a new transaction
-        beanManagedTransaction.begin();
-    }
-
-    @AfterEach
-    void afterEachTestMethod() throws SystemException {
-        // Rollback the transaction
-        beanManagedTransaction.rollback();
-    }
-
     @Test
     @Order(1)
     void shouldInjectTaskJpaService() {
@@ -113,8 +92,11 @@ public class TaskJpaServiceIT { // The class must be declared as public
         taskService.createTask(newTask);
 
         // Assert
-        assertThat(newTask.getId())
-                .isNotNull();
+//        assertThat(newTask.getId())
+//                .isNotNull();
+        Task createdTask = taskService.getTaskById(newTask.getId()).orElseThrow();
+        assertThat(createdTask).isNotNull();
+
 
     }
 
@@ -140,6 +122,7 @@ public class TaskJpaServiceIT { // The class must be declared as public
 
     }
 
+    @Transactional(TransactionMode.DISABLED)
     @Order(4)
     @Test
     void givenExistingEntity_whenUpdatedTask_thenTaskIsUpdated() {
@@ -147,9 +130,9 @@ public class TaskJpaServiceIT { // The class must be declared as public
         Task newTask = Task.of(faker);
 
         newTask = taskService.createTask(newTask);
-        newTask.setDescription(faker.coffee().descriptor());
+        newTask.setDescription("Test update method");
         newTask.setDone(!newTask.isDone());
-        //newTask.setProperty3(faker.providerName().methodName());
+        newTask.setPriority(TaskPriority.High);
 
         // Act
         Task updatedTask = taskService.updateTask(newTask);
@@ -161,7 +144,7 @@ public class TaskJpaServiceIT { // The class must be declared as public
         var existingTask = optionalTask.orElseThrow();
         assertThat(existingTask)
                 .usingRecursiveComparison()
-                // .ignoringFields("field1", "field2")
+                 .ignoringFields("updateTime")
                 .isEqualTo(updatedTask);
 
     }
@@ -215,13 +198,13 @@ public class TaskJpaServiceIT { // The class must be declared as public
         var firstActualTask = taskList.getFirst();
         assertThat(firstActualTask)
                 .usingRecursiveComparison()
-                // .ignoringFields("field1", "field2")
+                .ignoringFields("createTime", "updateTime")
                 .isEqualTo(firstExpectedTask);
         // Get the last entity and compare with expected results
         var lastActualTask = taskList.getLast();
         assertThat(lastActualTask)
                 .usingRecursiveComparison()
-                // .ignoringFields("field1", "field2")
+                 .ignoringFields("createTime", "updateTime")
                 .isEqualTo(lastExpectedTask);
 
     }

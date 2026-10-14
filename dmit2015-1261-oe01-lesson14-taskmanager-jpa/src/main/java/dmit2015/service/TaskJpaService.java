@@ -62,11 +62,11 @@ public class TaskJpaService implements TaskService {
             var existingTask = optionalTask.orElseThrow();
             // Update only properties that is editable by the end user
 
-//            existingTask.setDescription(task.getDescription());
-//            existingTask.setPriority(task.getPriority());
-//            existingTask.setDone(task.isDone());
+            existingTask.setDescription(task.getDescription());
+            existingTask.setPriority(task.getPriority());
+            existingTask.setDone(task.isDone());
 
-//            task = entityManager.merge(existingTask);
+            task = entityManager.merge(existingTask);
         }
         return task;
     }
@@ -88,6 +88,13 @@ public class TaskJpaService implements TaskService {
     public void deleteAllTasks() {
         entityManager.createQuery("DELETE FROM Task t").executeUpdate();
 //        entityManager.createNativeQuery("DELETE FROM Task").executeUpdate();
+    }
+
+    @Override
+    public long count() {
+        return (long) entityManager.createQuery(
+                "select count(t) from Task t")
+                .getSingleResult();
     }
 
 }

@@ -1,0 +1,97 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:h="jakarta.faces.html"
+        xmlns:p="primefaces"
+        template="/WEB-INF/faces-templates/layout.xhtml">
+
+    <ui:define name="title">Lesson 14 TaskManager JPA Practice</ui:define>
+
+    <ui:define name="maincontent">
+
+        <h1>Lesson 14 TaskManager JPA Practice</h1>
+
+        <p>
+            This project is a practice activity for learning Jakarta Persistence.
+            The starter application currently works with an in-memory task service.
+            Your goal is to upgrade it so tasks are stored in a relational database using JPA.
+        </p>
+
+        <h2>Current Starter Project</h2>
+
+        <ul>
+            <li>The JSF task page is already created.</li>
+            <li>The task page currently uses <code>MemoryTaskService</code>.</li>
+            <li>Tasks are lost when the application restarts.</li>
+            <li>Your job is to replace the memory service with a JPA service implementation.</li>
+        </ul>
+
+        <h2>Practice Goal</h2>
+
+        <p>
+            By the end of this activity, the application should use this architecture:
+        </p>
+
+        <pre>
+TaskCrudView
+    -> TaskService interface
+        -> TaskJpaService
+            -> EntityManager
+                -> H2 relational database
+        </pre>
+
+        <h2>Files You Will Create or Update</h2>
+
+        <ul>
+            <li><code>ApplicationConfig.java</code> - defines the H2 JTA datasource</li>
+            <li><code>persistence.xml</code> - defines the JPA persistence unit</li>
+            <li><code>Task.java</code> - becomes a JPA entity</li>
+            <li><code>TaskJpaService.java</code> - implements <code>TaskService</code> using JPA</li>
+            <li><code>TaskDataInitializer.java</code> - seeds sample data when the database is empty</li>
+            <li><code>TaskCrudView.java</code> - updated to use the JPA service</li>
+        </ul>
+
+        <h2>Task Entity Requirements</h2>
+
+        <ul>
+            <li>Map <code>Task</code> with <code>@Entity</code>.</li>
+            <li>Add a primary key using <code>@Id</code> and <code>@GeneratedValue</code>.</li>
+            <li>Add validation annotations for required fields.</li>
+            <li>Add <code>@Version</code> for optimistic locking.</li>
+            <li>Add <code>createTime</code> and <code>updateTime</code>.</li>
+            <li>Use <code>@PrePersist</code> and <code>@PreUpdate</code> to set audit timestamps.</li>
+        </ul>
+
+        <h2>Important Reminders</h2>
+
+        <ul>
+            <li>Do not put <code>EntityManager</code> code in <code>TaskCrudView</code>.</li>
+            <li>Put persistence logic in <code>TaskJpaService</code>.</li>
+            <li>Use the provided IntelliJ IDEA file templates for JPA setup files.</li>
+            <li>The H2 file database will still lose data if <code>drop-and-create</code> is enabled.</li>
+            <li>This practice project is not your Assignment 3 submission.</li>
+        </ul>
+
+        <h2>Application Links</h2>
+
+        <ul>
+            <li>
+                <h:link outcome="/events/manage-tasks" value="Manage Tasks"/>
+            </li>
+            <li>
+                <a href="#{request.contextPath}/h2-console" target="_blank">
+                    Open H2 Console
+                </a>
+                <span> - development/debugging only</span>
+            </li>
+        </ul>
+
+        <h2>Before Assignment 3 Troubleshooting</h2>
+
+        <p>
+            Be prepared to show your progress on this TaskManager JPA practice activity.
+            This practice uses the same pattern required for Assignment 3, but with a smaller domain model.
+        </p>
+
+    </ui:define>
+</ui:composition>

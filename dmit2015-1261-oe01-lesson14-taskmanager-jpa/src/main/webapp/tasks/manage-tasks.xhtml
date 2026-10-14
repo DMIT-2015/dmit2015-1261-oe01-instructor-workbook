@@ -1,0 +1,189 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:faces="jakarta.faces"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:pt="jakarta.faces.passthrough"
+        xmlns:cc="jakarta.faces.composite"
+        xmlns:c="jakarta.tags.core"
+        xmlns:fn="jakarta.tags.functions"
+        xmlns:o="http://omnifaces.org/ui"
+        xmlns:of="http://omnifaces.org/functions"
+        xmlns:p="primefaces"
+        template="/WEB-INF/faces-templates/layout.xhtml"
+>
+
+    <ui:param name="title" value="Manage Tasks"/>
+
+    <ui:param name="internalstyles"
+              value=".Tasks-table-header { display: flex; align-items:center; justify-content: space-between; flex-wrap: wrap; }"/>
+
+    <ui:define name="maincontent">
+
+        <div class="card">
+            <h:form id="form">
+                <p:growl id="growl" showDetail="true">
+                    <p:autoUpdate/>
+                </p:growl>
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton id="newButton"
+                                         value="New"
+                                         icon="pi pi-plus"
+                                         actionListener="#{currentTaskCrudView.onOpenNew}"
+                                         update=":dialogs:manage-Task-content"
+                                         oncomplete="PF('manageTaskDialog').show()"
+                                         styleClass="ui-button-success"
+                                         style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:manage-Task-content"/>
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:dataTable id="dt-Tasks" widgetVar="dtTasks"
+                             value="#{currentTaskCrudView.tasks}"
+                             var="currentItem"
+                             reflow="true"
+                             selection="#{currentTaskCrudView.selectedTask}"
+                             rowKey="#{currentItem.id}"
+                             paginator="true" rows="10"
+                             paginatorPosition="bottom">
+
+                    <f:facet name="header">
+                        <div class="Tasks-table-header">
+                            <span style="font-weight: bold">Tasks</span>
+                            <span class="filter-container ui-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <p:inputText id="globalFilter" onkeyup="PF('dtTasks').filter()" placeholder="Search"/>
+                            </span>
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="Description" filterBy="#{currentItem.description}">
+                        <h:outputText value="#{currentItem.description}"/>
+                    </p:column>
+                    <p:column headerText="Priority" filterBy="#{currentItem.priority}">
+                        <h:outputText value="#{currentItem.priority}"/>
+                    </p:column>
+                    <p:column headerText="Done">
+                        <p:selectBooleanCheckbox value="#{currentItem.done}"
+                                                 readonly="true"/>
+                    </p:column>
+
+                    <p:column exportable="false" ariaHeaderText="Actions">
+                        <p:commandButton icon="pi pi-pencil"
+                                         update=":dialogs:manage-Task-content"
+                                         oncomplete="PF('manageTaskDialog').show()"
+                                         styleClass="edit-button rounded-button ui-button-success"
+                                         process="@this">
+                            <f:setPropertyActionListener value="#{currentItem}"
+                                                         target="#{currentTaskCrudView.selectedTask}"/>
+                            <f:setPropertyActionListener value="#{currentItem.id}"
+                                                         target="#{currentTaskCrudView.selectedId}"/>
+                            <p:resetInput target=":dialogs:manage-Task-content"/>
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                         process="@this"
+                                         oncomplete="PF('deleteTaskDialog').show()">
+                            <f:setPropertyActionListener value="#{currentItem}"
+                                                         target="#{currentTaskCrudView.selectedTask}"/>
+                            <f:setPropertyActionListener value="#{currentItem.id}"
+                                                         target="#{currentTaskCrudView.selectedId}"/>
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="dialogs">
+                <p:dialog header="Task Details" showEffect="fade" modal="true" widgetVar="manageTaskDialog"
+                          responsive="true">
+
+                    <p:messages id="messages">
+                        <p:autoUpdate/>
+                    </p:messages>
+
+                    <p:outputPanel id="manage-Task-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty currentTaskCrudView.selectedTask}">
+                            <div class="field">
+                                <p:outputLabel for="@next">Description</p:outputLabel>
+                                <p:inputText
+                                        id="description"
+                                        value="#{currentTaskCrudView.selectedTask.description}">
+                                </p:inputText>
+                                <p:message for="description" />
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="@next">Priority</p:outputLabel>
+                                <p:selectOneMenu
+                                        id="priority"
+                                        value="#{currentTaskCrudView.selectedTask.priority}">
+                                    <f:selectItem itemLabel="--select a priority--"
+                                                  itemValue="" />
+                                    <!--                                    <f:selectItem itemLabel="Low" itemValue="Low" />-->
+                                    <!--                                    <f:selectItem itemLabel="Medium" itemValue="Medium" />-->
+                                    <!--                                    <f:selectItem itemLabel="High" itemValue="High" />-->
+                                    <f:selectItems value="#{currentTaskCrudView.taskPriorites}"
+                                                   var="item"
+                                                   itemLabel="#{item}"
+                                                   itemValue="#{item}"
+                                    />s
+                                </p:selectOneMenu>
+                                <p:message for="priority" />
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="@next">Done</p:outputLabel>
+                                <p:selectBooleanCheckbox id="done" value="#{currentTaskCrudView.selectedTask.done}" />
+                                <p:message for="done" />
+                            </div>
+
+                        </p:outputPanel>
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton id="saveButton"
+                                         value="Save"
+                                         icon="pi pi-check"
+                                         actionListener="#{currentTaskCrudView.onSave}"
+                                         update="manage-Task-content"
+                                         process="manage-Task-content @this"/>
+
+                        <p:commandButton id="generateDataButton"
+                                         value="Generate Data"
+                                         icon="pi pi-calculator"
+                                         actionListener="#{currentTaskCrudView.onGenerateData}"
+                                         update="manage-Task-content"
+                                         process="@this"/>
+
+                        <p:commandButton id="cancelButton"
+                                         value="Cancel"
+                                         icon="pi pi-times"
+                                         onclick="PF('manageTaskDialog').hide()"
+                                         class="ui-button-secondary"
+                                         type="button"/>
+                    </f:facet>
+                </p:dialog>
+
+                <p:confirmDialog widgetVar="deleteTaskDialog" showEffect="fade" width="300"
+                                 message="Delete the Task?" header="Confirm" severity="warn">
+                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{currentTaskCrudView.onDelete}"
+                                     process="@this"
+                                     oncomplete="PF('deleteTaskDialog').hide()"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteTaskDialog').hide()"/>
+                </p:confirmDialog>
+
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                     icon="pi pi-times"/>
+                </p:confirmDialog>
+            </h:form>
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

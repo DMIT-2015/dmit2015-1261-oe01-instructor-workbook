@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
+             version="3.2">
+
+    <persistence-unit name="h2database-jpa-pu" transaction-type="JTA">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <jta-data-source>java:app/datasources/H2DatabaseDS</jta-data-source>
+
+        <!-- Data source to use with wildfly-datasources-galleon-pack
+            https://github.com/wildfly-extras/wildfly-datasources-galleon-pack -->
+        <!--        <jta-data-source>java:jboss/datasources/H2DatabaseDS</jta-data-source>-->
+
+        <properties>
+            <property name="hibernate.show_sql" value="true"/>
+
+            <!--
+                DEVELOPMENT ONLY:
+                Use drop-and-create while you are first building or changing your entity class.
+                This deletes and recreates the database tables each time the application starts.
+
+                BEFORE YOUR FINAL DEMO:
+                Change this value to "none" so your file-based H2 database keeps its data
+                between application restarts.
+
+                Valid values include: none, create, drop-and-create, drop.
+            -->
+            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+
+            <!-- <property name="jakarta.persistence.sql-load-script-source" value="META-INF/sql/import-data.sql" /> -->
+
+        </properties>
+    </persistence-unit>
+
+</persistence>

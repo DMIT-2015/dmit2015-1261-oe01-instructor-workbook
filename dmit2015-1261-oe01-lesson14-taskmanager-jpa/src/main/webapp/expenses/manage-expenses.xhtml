@@ -1,0 +1,187 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:faces="jakarta.faces"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:pt="jakarta.faces.passthrough"
+        xmlns:cc="jakarta.faces.composite"
+        xmlns:c="jakarta.tags.core"
+        xmlns:fn="jakarta.tags.functions"
+        xmlns:o="http://omnifaces.org/ui"
+        xmlns:of="http://omnifaces.org/functions"
+        xmlns:p="primefaces"
+        template="/WEB-INF/faces-templates/layout.xhtml"
+>
+
+    <ui:param name="title" value="Expense - CRUD"/>
+
+    <ui:param name="internalstyles"
+              value=".Expenses-table-header { display: flex; align-items:center; justify-content: space-between; flex-wrap: wrap; }"/>
+
+    <ui:define name="maincontent">
+
+        <div class="card">
+            <h:form id="form">
+                <p:growl id="growl" showDetail="true">
+                    <p:autoUpdate/>
+                </p:growl>
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton id="newButton"
+                                         value="New"
+                                         icon="pi pi-plus"
+                                         actionListener="#{currentExpenseCrudView.onOpenNew}"
+                                         update=":dialogs:manage-Expense-content"
+                                         oncomplete="PF('manageExpenseDialog').show()"
+                                         styleClass="ui-button-success"
+                                         style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:manage-Expense-content"/>
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:dataTable id="dt-Expenses" widgetVar="dtExpenses"
+                             value="#{currentExpenseCrudView.expenses}"
+                             var="currentItem"
+                             reflow="true"
+                             selection="#{currentExpenseCrudView.selectedExpense}"
+                             rowKey="#{currentItem.id}"
+                             paginator="true" rows="10"
+                             paginatorPosition="bottom">
+
+                    <f:facet name="header">
+                        <div class="Expenses-table-header">
+                            <span style="font-weight: bold">Expenses</span>
+                            <span class="filter-container ui-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <p:inputText id="globalFilter" onkeyup="PF('dtExpenses').filter()"
+                                             placeholder="Search"/>
+                            </span>
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="Desccription" filterBy="#{currentItem.description}">
+                        <h:outputText value="#{currentItem.description}"/>
+                    </p:column>
+                    <p:column headerText="Amount" filterBy="#{currentItem.amount}">
+                        <h:outputText value="#{currentItem.amount}">
+                            <f:convertNumber type="currency" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Date">
+                        <h:outputText value="#{currentItem.date}">
+                            <f:convertDateTime type="localDate"  pattern="yyyy-MM-dd" />"
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column exportable="false" ariaHeaderText="Actions">
+                        <p:commandButton icon="pi pi-pencil"
+                                         update=":dialogs:manage-Expense-content"
+                                         oncomplete="PF('manageExpenseDialog').show()"
+                                         styleClass="edit-button rounded-button ui-button-success"
+                                         process="@this">
+                            <f:setPropertyActionListener value="#{currentItem}"
+                                                         target="#{currentExpenseCrudView.selectedExpense}"/>
+                            <f:setPropertyActionListener value="#{currentItem.id}"
+                                                         target="#{currentExpenseCrudView.selectedId}"/>
+                            <p:resetInput target=":dialogs:manage-Expense-content"/>
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                         process="@this"
+                                         oncomplete="PF('deleteExpenseDialog').show()">
+                            <f:setPropertyActionListener value="#{currentItem}"
+                                                         target="#{currentExpenseCrudView.selectedExpense}"/>
+                            <f:setPropertyActionListener value="#{currentItem.id}"
+                                                         target="#{currentExpenseCrudView.selectedId}"/>
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="dialogs">
+                <p:dialog header="Expense Details" showEffect="fade" modal="true" widgetVar="manageExpenseDialog"
+                          responsive="true">
+
+                    <p:messages id="messages">
+                        <p:autoUpdate/>
+                    </p:messages>
+
+                    <p:outputPanel id="manage-Expense-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty currentExpenseCrudView.selectedExpense}">
+                            <!-- TODO: Add input field for each editable property of the entity -->
+                            <div class="field">
+                                <p:outputLabel for="@next">Description</p:outputLabel>
+                                <p:inputText
+                                        id="description"
+                                        value="#{currentExpenseCrudView.selectedExpense.description}">
+                                </p:inputText>
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="@next">Amount</p:outputLabel>
+                                <p:inputNumber
+                                        id="amount"
+                                        value="#{currentExpenseCrudView.selectedExpense.amount}">
+                                </p:inputNumber>
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="@next">Date</p:outputLabel>
+                                <p:datePicker showIcon="true"
+                                        id="date"
+                                        value="#{currentExpenseCrudView.selectedExpense.date}"
+                                        pattern="yyyy-MM-dd"
+                                >
+                                </p:datePicker>
+                            </div>
+
+
+                        </p:outputPanel>
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton id="saveButton"
+                                         value="Save"
+                                         icon="pi pi-check"
+                                         actionListener="#{currentExpenseCrudView.onSave}"
+                                         update="manage-Expense-content"
+                                         process="manage-Expense-content @this"/>
+
+                        <p:commandButton id="generateDataButton"
+                                         value="Generate Data"
+                                         icon="pi pi-calculator"
+                                         actionListener="#{currentExpenseCrudView.onGenerateData}"
+                                         update="manage-Expense-content"
+                                         process="@this"/>
+
+                        <p:commandButton id="cancelButton"
+                                         value="Cancel"
+                                         icon="pi pi-times"
+                                         onclick="PF('manageExpenseDialog').hide()"
+                                         class="ui-button-secondary"
+                                         type="button"/>
+                    </f:facet>
+                </p:dialog>
+
+                <p:confirmDialog widgetVar="deleteExpenseDialog" showEffect="fade" width="300"
+                                 message="Delete the Expense?" header="Confirm" severity="warn">
+                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{currentExpenseCrudView.onDelete}"
+                                     process="@this"
+                                     oncomplete="PF('deleteExpenseDialog').hide()"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteExpenseDialog').hide()"/>
+                </p:confirmDialog>
+
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                     icon="pi pi-times"/>
+                </p:confirmDialog>
+            </h:form>
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

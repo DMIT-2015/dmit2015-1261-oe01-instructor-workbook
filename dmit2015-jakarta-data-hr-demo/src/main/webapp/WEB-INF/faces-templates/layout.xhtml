@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:faces="jakarta.faces"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:pt="jakarta.faces.passthrough"
+        xmlns:cc="jakarta.faces.composite"
+        xmlns:c="jakarta.tags.core"
+        xmlns:fn="jakarta.tags.functions"
+        xmlns:o="http://omnifaces.org/ui"
+        xmlns:of="http://omnifaces.org/functions"
+        xmlns:p="primefaces"
+>
+
+<h:head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- Allow pages to override description/keywords/title via ui:param -->
+    <meta name="description" content="${description}"/>
+    <meta name="keywords" content="${keywords}"/>
+    <title>${title}</title>
+
+    <!-- Define additional stylesheets in child templates -->
+    <ui:insert name="externalstyles">
+<!--        <h:outputStylesheet name="css/styles.css"/>-->
+        <h:outputStylesheet library="webjars" name="primeflex/4.0.0/primeflex.min.css"/>
+        <h:outputStylesheet library="webjars" name="primeflex/4.0.0/themes/primeone-light.css"/>
+    </ui:insert>
+
+    <!-- Define additional scripts in child templates -->
+    <ui:insert name="headscripts"/>
+    <o:importFunctions type="org.omnifaces.util.Faces"/>
+</h:head>
+
+<h:body style="padding: 2rem; min-height: 100dvh;">
+
+    <header>
+        <nav aria-label="Main">
+            <div class="card">
+                <h:form>
+                    <ui:insert name="navigation">
+                        <p:menubar role="navigation">
+                            <p:menuitem value="Home" icon="pi pi-home" outcome="/index"/>
+
+                            <p:menuitem value="Employee Query"
+                                        icon="pi pi-search"
+                                        url="#{request.contextPath}/employees/query.xhtml"/>
+
+                            <!-- Example submenu scaffold
+                            <p:submenu label="Students" icon="pi pi-users">
+                              <p:menuitem value="List" icon="pi pi-list" outcome="/students/index"/>
+                              <p:menuitem value="Create" icon="pi pi-plus" outcome="/students/create"/>
+                            </p:submenu>
+                            -->
+                        </p:menubar>
+                    </ui:insert>
+                </h:form>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <p:messages id="messages" showDetail="false" closable="true">
+            <p:autoUpdate/>
+        </p:messages>
+        <p:growl id="growl" showDetail="true" life="3000" sticky="false">
+            <p:autoUpdate/>
+        </p:growl>
+
+        <ui:insert name="maincontent">
+            NO MAIN CONTENT PROVIDED
+        </ui:insert>
+    </main>
+
+    <footer class="mt-4">
+        <hr/>
+        <ui:insert name="footer">
+            <p>
+                This <a href="https://jakarta.ee/learn/docs/jakartaee-tutorial/current/index.html"
+                        target="_blank">Jakarta EE</a>
+                web application is built using
+                <a href="https://www.jetbrains.com/idea/" target="_blank">IntelliJ IDEA</a>,
+                <a href="https://jakarta.ee/specifications/faces/" target="_blank">Jakarta Faces</a>,
+                <a href="https://omnifaces.org/" target="_blank">OmniFaces</a>,
+                <a href="https://www.primefaces.org/" target="_blank">PrimeFaces</a>,
+                <a href="https://www.primefaces.org/primeflex/" target="_blank">PrimeFlex</a>,
+                and runs on
+                <a href="http://www.wildfly.org/" target="_blank">WildFly</a>.
+                &#169; 2026 DMIT2015
+            </p>
+        </ui:insert>
+    </footer>
+
+    <ui:insert name="bodyscripts"/>
+
+</h:body>
+</html>

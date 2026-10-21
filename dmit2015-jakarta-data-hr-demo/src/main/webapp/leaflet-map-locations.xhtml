@@ -1,0 +1,55 @@
+<!-- This is a Faces composition page that extends the layout template -->
+<ui:composition
+        template="/WEB-INF/faces-templates/layout.xhtml"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:h="jakarta.faces.html"
+        xmlns:f="jakarta.faces.core"
+        xmlns:p="primefaces"
+        xmlns:o="http://omnifaces.org/ui">
+
+    <!-- Page metadata for title, description, and keywords -->
+    <ui:param name="title" value="leaflet-map-locations"/>
+
+    <ui:define name="externalstyles">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+              integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+              crossorigin=""/>
+    </ui:define>
+
+    <ui:define name="headscripts">
+        <!-- Make sure you put this AFTER Leaflet's CSS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                crossorigin=""></script>
+    </ui:define>
+
+    <!-- Define main content for the page -->
+    <ui:define name="maincontent">
+        <div class="card">
+            <h1 role="heading" aria-level="1">Leaflet Map Locations</h1>
+
+            <p:dataTable id="locations"
+                         value="#{mapLocationView.locations}"
+                         var="currentItem">
+                <p:column headerText="Store Name">
+                    <h:outputText value="#{currentItem.storeName}" />
+                </p:column>
+                <p:column headerText="Store Location">
+                    <div id="map#{currentItem.id}" style="height: 240px; width: 320px"></div>
+                    <h:outputScript>
+                        var map = L.map('map#{currentItem.id}').setView([#{currentItem.latitude}, #{currentItem.longitude}], 13);
+
+                        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&#169; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                        }).addTo(map);
+
+                        var marker = L.marker([#{currentItem.latitude}, #{currentItem.longitude}]).addTo(map);
+                    </h:outputScript>
+                </p:column>
+
+            </p:dataTable>
+        </div>
+    </ui:define>
+
+</ui:composition>

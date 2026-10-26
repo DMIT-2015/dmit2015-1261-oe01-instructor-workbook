@@ -1,0 +1,84 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:faces="jakarta.faces"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:pt="jakarta.faces.passthrough"
+        xmlns:cc="jakarta.faces.composite"
+        xmlns:c="jakarta.tags.core"
+        xmlns:fn="jakarta.tags.functions"
+        xmlns:o="omnifaces"
+        xmlns:p="primefaces"
+        template="/WEB-INF/faces-templates/layout.xhtml"
+>
+
+    <ui:param name="title" value="Movie Details"/>
+
+    <ui:define name="maincontent">
+
+        <p:panel header="Movie Details">
+            <p:panelGrid columns="2">
+                <h:panelGroup>
+                    <strong><h:outputText value="ID"/></strong>
+                </h:panelGroup>
+                <h:outputText id="editId" value="#{currentMovieDetailsView.editId}"/>
+
+                <h:panelGroup>
+                    <strong><h:outputText value="Title"/></strong>
+                </h:panelGroup>
+                <h:outputText id="title" value="#{currentMovieDetailsView.existingMovie.title}"/>
+
+                <h:panelGroup>
+                    <strong><h:outputText value="Genre"/></strong>
+                </h:panelGroup>
+                <h:outputText id="genre" value="#{currentMovieDetailsView.existingMovie.genre}"/>
+
+                <h:panelGroup>
+                    <strong><h:outputText value="Rating"/></strong>
+                </h:panelGroup>
+                <h:outputText id="rating" value="#{currentMovieDetailsView.existingMovie.rating}"/>
+
+                <h:panelGroup>
+                    <strong><h:outputText value="Release Date"/></strong>
+                </h:panelGroup>
+                <h:outputText id="releaseDate" value="#{currentMovieDetailsView.existingMovie.releaseDate}"/>
+
+                <h:panelGroup>
+                    <strong><h:outputText value="Price"/></strong>
+                </h:panelGroup>
+                <h:outputText id="price" value="#{currentMovieDetailsView.existingMovie.price}"/>
+
+                <h:panelGroup>
+                    <strong><h:outputText value="Created"/></strong>
+                </h:panelGroup>
+                <h:outputText id="createTime" value="#{currentMovieDetailsView.existingMovie.createTime}">
+                    <f:convertDateTime type="localDateTime" pattern="yyyy-MM-dd h:mm a" />
+                </h:outputText>
+
+                <h:panelGroup>
+                    <strong><h:outputText value="Updated"/></strong>
+                </h:panelGroup>
+                <h:outputText id="updateTime" value="#{currentMovieDetailsView.existingMovie.updateTime}">
+                    <f:convertDateTime type="localDateTime" pattern="yyyy-MM-dd h:mm a" />
+                </h:outputText>
+
+                <h:panelGroup>
+                    <strong><h:outputText value="Version"/></strong>
+                </h:panelGroup>
+                <h:outputText id="version" value="#{currentMovieDetailsView.existingMovie.version}"/>
+
+            </p:panelGrid>
+
+        </p:panel>
+
+        <p:link id="editLink" outcome="edit" icon="pi pi-user-edit" value="edit">
+            <f:param name="editId" value="#{currentMovieDetailsView.editId}"/>
+        </p:link>
+        |
+        <p:link id="backToListLink" outcome="index" value="Back to List">
+        </p:link>
+
+    </ui:define>
+
+</ui:composition>

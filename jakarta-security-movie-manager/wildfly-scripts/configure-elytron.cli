@@ -1,0 +1,10 @@
+# CLI script to enable elytron for the quickstart application in the application server
+
+# Disable 'integrated-jaspi' as the quickstart will be managing it's own identities
+/subsystem=undertow/application-security-domain=other:write-attribute(name=integrated-jaspi, value=false)
+
+# CLI script to disable HTTP/2 as it does not work with self-signed certificates
+/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=enable-http2,value=false)
+
+# Reload the server configuration
+#reload

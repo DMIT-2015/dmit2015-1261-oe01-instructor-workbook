@@ -1,0 +1,16 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="jakarta.faces.facelets"
+        template="/WEB-INF/faces-templates/layout.xhtml">
+
+    <ui:param name="title" value="Forbidden"/>
+
+    <ui:define name="maincontent">
+        <h1>HTTP Error 403 - Forbidden</h1>
+
+        <p>Your account does NOT have permission to access the requested resource #{requestScope['jakarta.servlet.error.request_uri']}.
+        </p>
+
+    </ui:define>
+
+</ui:composition>

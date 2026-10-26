@@ -1,0 +1,83 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:faces="jakarta.faces"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:pt="jakarta.faces.passthrough"
+        xmlns:cc="jakarta.faces.composite"
+        xmlns:c="jakarta.tags.core"
+        xmlns:fn="jakarta.tags.functions"
+        xmlns:o="omnifaces"
+        xmlns:p="primefaces"
+        template="/WEB-INF/faces-templates/layout.xhtml"
+>
+
+    <ui:param name="title" value="Movie - List"/>
+
+    <ui:define name="maincontent">
+
+        <h1>Movie List</h1>
+
+        <h:form>
+
+            <p:commandButton value="Create New"
+                             action="create"
+                             icon="pi pi-database"
+                             ajax="false"
+            >
+            </p:commandButton>
+
+            <p:dataTable id="entityTable"
+                         value="#{currentMovieListView.movies}"
+                         var="currentItem">
+
+                <p:column headerText="Title">
+                    <h:outputText value="#{currentItem.title}"/>
+                </p:column>
+
+                <p:column headerText="Genre">
+                    <h:outputText value="#{currentItem.genre}"/>
+                </p:column>
+
+                <p:column headerText="Rating">
+                    <h:outputText value="#{currentItem.rating}"/>
+                </p:column>
+
+                <p:column headerText="Price">
+                    <h:outputText value="#{currentItem.price}">
+                        <f:convertNumber type="currency" locale="en_CA"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Release Date">
+                    <h:outputText value="#{currentItem.releaseDate}">
+                        <f:convertDateTime type="localDate" pattern="MMM d, yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Action">
+                    <p:link id="editLink" outcome="edit" value="edit">
+                        <f:param name="editId" value="#{currentItem.id}"/>
+                    </p:link>
+
+                    |
+
+                    <p:link id="detailsLink" outcome="details" value="details">
+                        <f:param name="editId" value="#{currentItem.id}"/>
+                    </p:link>
+
+                    |
+
+                    <p:link id="deleteLink" outcome="delete" value="delete">
+                        <f:param name="editId" value="#{currentItem.id}"/>
+                    </p:link>
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

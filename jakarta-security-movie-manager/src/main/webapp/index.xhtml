@@ -1,0 +1,32 @@
+<!-- This is a Faces composition page that extends the layout template -->
+<ui:composition
+        template="/WEB-INF/faces-templates/layout.xhtml"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:h="jakarta.faces.html"
+        xmlns:f="jakarta.faces.core"
+        xmlns:p="primefaces"
+        xmlns:o="http://omnifaces.org/ui">
+
+    <!-- Page metadata -->
+    <ui:param name="title" value="Movie Manager | Home"/>
+
+    <!-- Define main content -->
+    <ui:define name="maincontent">
+        <div class="card">
+            <h1>DMIT2015 Movie Manager</h1>
+
+            <p:panel header="Welcome to Movie Manager">
+                <p>
+                    This practice application demonstrates Jakarta Security
+                    with Keycloak authentication, role-based authorization,
+                    and user-specific data access using Jakarta Data.
+                </p>
+
+                <p>
+                    Sign in to manage your movies based on your assigned role.
+                </p>
+            </p:panel>
+        </div>
+    </ui:define>
+
+</ui:composition>

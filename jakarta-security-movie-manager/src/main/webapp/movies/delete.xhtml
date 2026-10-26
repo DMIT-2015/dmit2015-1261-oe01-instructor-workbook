@@ -1,0 +1,86 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:faces="jakarta.faces"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:pt="jakarta.faces.passthrough"
+        xmlns:cc="jakarta.faces.composite"
+        xmlns:c="jakarta.tags.core"
+        xmlns:fn="jakarta.tags.functions"
+        xmlns:o="omnifaces"
+        xmlns:p="primefaces"
+        template="/WEB-INF/faces-templates/layout.xhtml"
+>
+
+    <ui:param name="title" value="Delete Movie"/>
+
+    <ui:define name="maincontent">
+
+        <h1>Movie Details</h1>
+
+        <h3>Are you sure you want to delete this?</h3>
+
+        <h:form prependId="false">
+
+            <p:panel title="Movie Details">
+                <p:panelGrid columns="2">
+                    <h:panelGroup>
+                        <strong><h:outputText value="ID"/></strong>
+                    </h:panelGroup>
+                    <h:outputText value="#{currentMovieDeleteView.editId}"/>
+
+                    <h:panelGroup>
+                        <strong><h:outputText value="Title"/></strong>
+                    </h:panelGroup>
+                    <h:outputText value="#{currentMovieDeleteView.existingMovie.title}"/>
+
+                    <h:panelGroup>
+                        <strong><h:outputText value="Genre"/></strong>
+                    </h:panelGroup>
+                    <h:outputText value="#{currentMovieDeleteView.existingMovie.genre}"/>
+
+                    <h:panelGroup>
+                        <strong><h:outputText value="Rating"/></strong>
+                    </h:panelGroup>
+                    <h:outputText value="#{currentMovieDeleteView.existingMovie.rating}"/>
+
+                    <h:panelGroup>
+                        <strong><h:outputText value="ReleaseDate"/></strong>
+                    </h:panelGroup>
+                    <h:outputText value="#{currentMovieDeleteView.existingMovie.releaseDate}">
+                        <f:convertDateTime type="localDate" pattern="MMM d, yyyy" />
+                    </h:outputText>
+
+                </p:panelGrid>
+
+                <p:commandButton
+                        id="deleteButton"
+                        value="Delete"
+                        icon="pi pi-trash"
+                        styleClass="ui-button-danger"
+                        immediate="true"
+                        action="#{currentMovieDeleteView.onDelete}"
+                        update=":messages"
+                >
+                    <p:confirm header="Delete Confirmation" message="Do you want to delete this record?"
+                               icon="pi pi-info-circle"/>
+                </p:commandButton>
+
+            </p:panel>
+
+            <p>
+                <p:link id="backToListLink" outcome="index" value="Back to List">
+                </p:link>
+            </p>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"/>
+            </p:confirmDialog>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

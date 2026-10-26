@@ -1,0 +1,4 @@
+# CLI script to enable one-way SSL/TLS for Applications
+# This scripts assumes that you have already generated a keystore file
+security enable-ssl-http-server --key-store-path=~/jdk/ssl/server.keystore --key-store-password=ServerPassword2015 --override-ssl-context
+

@@ -16,6 +16,11 @@
     <ui:param name="title" value="Movie - List"/>
 
     <ui:define name="maincontent">
+        <!-- Invoke init() from Faces page -->
+        <f:metadata>
+            <f:viewParam name="dummy" />
+            <f:event type="postInvokeAction" listener="#{currentMovieListView.init()}" />
+        </f:metadata>
 
         <h1>Movie List</h1>
 
@@ -31,6 +36,10 @@
             <p:dataTable id="entityTable"
                          value="#{currentMovieListView.movies}"
                          var="currentItem">
+
+                <p:column headerText="Username">
+                    <h:outputText value="#{currentItem.username}"/>
+                </p:column>
 
                 <p:column headerText="Title">
                     <h:outputText value="#{currentItem.title}"/>

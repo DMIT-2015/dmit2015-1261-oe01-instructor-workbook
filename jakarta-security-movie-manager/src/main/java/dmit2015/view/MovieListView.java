@@ -25,10 +25,12 @@ public class MovieListView implements Serializable {
     @Getter
     private List<Movie> movies;
 
-    @PostConstruct  // After @Inject is complete
+//    @PostConstruct  // After @Inject is complete
     public void init() {
         try {
             movies = movieService.getAllMovies();
+        } catch (RuntimeException ex) {
+            Messages.addGlobalWarn(ex.getMessage());
         } catch (Exception ex) {
             Messages.addGlobalError(ex.getMessage());
         }

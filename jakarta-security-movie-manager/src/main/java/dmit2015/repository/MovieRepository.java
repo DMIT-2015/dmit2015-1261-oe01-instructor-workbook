@@ -22,6 +22,9 @@ public interface MovieRepository {
     List<Movie> findAll();
 
     @Find
+    List<Movie> findAllByUsername(String username);
+
+    @Find
     Optional<Movie> findOptionalById(long id);
 
     @Update

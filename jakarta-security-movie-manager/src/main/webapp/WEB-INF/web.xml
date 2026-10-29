@@ -41,7 +41,7 @@
         <servlet-name>H2Console</servlet-name>
         <url-pattern>/h2-console/*</url-pattern>
     </servlet-mapping>
-    <!--
+    
     <security-role>
         <role-name>admin</role-name>
     </security-role>
@@ -51,10 +51,13 @@
             <url-pattern>/h2-console/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>admin</role-name>
+            <role-name>IT</role-name>
         </auth-constraint>
     </security-constraint>
-    -->
+    
+    <security-role>
+        <role-name>IT</role-name>
+    </security-role>
     
     <security-role>
         <role-name>Sales</role-name>
@@ -63,44 +66,54 @@
     <security-role>
         <role-name>Administration</role-name>
     </security-role>
-    
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>CanViewMovies</web-resource-name>
-            <url-pattern>/movies/index.xhtml</url-pattern>
-            <url-pattern>/movies/index</url-pattern>
-            <url-pattern>/movies/details.xhtml</url-pattern>
-            <url-pattern>/movies/details</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Sales</role-name>
-            <role-name>Administration</role-name>
-        </auth-constraint>
-    </security-constraint>
-    
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>CanCreateMoviews</web-resource-name>
-            <url-pattern>/movies/create.xhtml</url-pattern>
-            <url-pattern>/movies/create</url-pattern>
-            <url-pattern>/movoies/edit.xhtml</url-pattern>
-            <url-pattern>/movoies/edit</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>Sales</role-name>
-        </auth-constraint>
-    </security-constraint>
 
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>CanDeleteMovies</web-resource-name>
-            <url-pattern>/movies/delete.xhtml</url-pattern>
-            <url-pattern>/movies/delete</url-pattern>
+            <web-resource-name>RestrictedResources</web-resource-name>
+            <url-pattern>/movies/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>Administration</role-name>
+            <role-name>**</role-name>
         </auth-constraint>
     </security-constraint>
+    
+<!--    <security-constraint>-->
+<!--        <web-resource-collection>-->
+<!--            <web-resource-name>CanViewMovies</web-resource-name>-->
+<!--            <url-pattern>/movies/index.xhtml</url-pattern>-->
+<!--            <url-pattern>/movies/index</url-pattern>-->
+<!--            <url-pattern>/movies/details.xhtml</url-pattern>-->
+<!--            <url-pattern>/movies/details</url-pattern>-->
+<!--        </web-resource-collection>-->
+<!--        <auth-constraint>-->
+<!--            <role-name>Sales</role-name>-->
+<!--            <role-name>Administration</role-name>-->
+<!--        </auth-constraint>-->
+<!--    </security-constraint>-->
+    
+<!--    <security-constraint>-->
+<!--        <web-resource-collection>-->
+<!--            <web-resource-name>CanCreateMoviews</web-resource-name>-->
+<!--            <url-pattern>/movies/create.xhtml</url-pattern>-->
+<!--            <url-pattern>/movies/create</url-pattern>-->
+<!--            <url-pattern>/movies/edit.xhtml</url-pattern>-->
+<!--            <url-pattern>/movies/edit</url-pattern>-->
+<!--        </web-resource-collection>-->
+<!--        <auth-constraint>-->
+<!--            <role-name>Sales</role-name>-->
+<!--        </auth-constraint>-->
+<!--    </security-constraint>-->
+
+<!--    <security-constraint>-->
+<!--        <web-resource-collection>-->
+<!--            <web-resource-name>CanDeleteMovies</web-resource-name>-->
+<!--            <url-pattern>/movies/delete.xhtml</url-pattern>-->
+<!--            <url-pattern>/movies/delete</url-pattern>-->
+<!--        </web-resource-collection>-->
+<!--        <auth-constraint>-->
+<!--            <role-name>Administration</role-name>-->
+<!--        </auth-constraint>-->
+<!--    </security-constraint>-->
 
     <error-page>
         <error-code>403</error-code>

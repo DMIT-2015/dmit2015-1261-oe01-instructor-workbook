@@ -34,16 +34,21 @@ public class MovieEditView implements Serializable {
     @Getter
     private Movie existingMovie;
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
         if (!Faces.isPostback()) {
             if (editId != null) {
-                Optional<Movie> maybeMovie = movieService.findMovieById(editId);
-                if (maybeMovie.isPresent()) {
-                    existingMovie = maybeMovie.orElseThrow();
-                } else {
-                    Faces.redirect(Faces.getRequestURI().substring(0, Faces.getRequestURI().lastIndexOf("/")) + "/index.xhtml");
+                try {
+                    Optional<Movie> maybeMovie = movieService.findMovieById(editId);
+                    if (maybeMovie.isPresent()) {
+                        existingMovie = maybeMovie.orElseThrow();
+                    } else {
+                        Faces.redirect(Faces.getRequestURI().substring(0, Faces.getRequestURI().lastIndexOf("/")) + "/index.xhtml");
+                    }
+                } catch (RuntimeException ex) {
+                    Messages.addGlobalWarn(ex.getMessage());
                 }
+
             } else {
                 Faces.redirect(Faces.getRequestURI().substring(0, Faces.getRequestURI().lastIndexOf("/")) + "/index.xhtml");
             }

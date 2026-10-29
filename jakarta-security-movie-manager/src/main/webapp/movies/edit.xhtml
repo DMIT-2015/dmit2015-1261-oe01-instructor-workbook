@@ -16,6 +16,12 @@
     <ui:param name="title" value="Edit Movie"/>
 
     <ui:define name="maincontent">
+        <!-- Invoke init() from Faces page -->
+        <f:metadata>
+            <f:viewParam name="dummy" />
+            <f:event type="postInvokeAction" listener="#{currentMovieEditView.init()}" />
+        </f:metadata>
+
 
         <h1>Edit Movie</h1>
 

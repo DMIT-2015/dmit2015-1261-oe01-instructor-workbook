@@ -19,53 +19,93 @@ public class MovieService {
     @Inject
     private MovieRepository movieRepository;
 
+    private String getAuthenticatedUsername() {
+        return securityContext.getCallerPrincipal().getName();
+    }
+
+    private boolean hasContributorRole() {
+        return securityContext.isCallerInRole("Sales");
+    }
+
+    private boolean hasAdministratorRole() {
+        return securityContext.isCallerInRole("Administration");
+    }
+
+    private boolean hasRequiredRoles() {
+        return hasContributorRole() || hasAdministratorRole();
+    }
+
+    private boolean isAuthenticated() {
+        return !getAuthenticatedUsername().equalsIgnoreCase("anonymous");
+    }
+
     public void addMovie(Movie movie) {
+        if (!isAuthenticated()) {
+            throw new RuntimeException("Access denied. Please login first.");
+        }
+        if (!hasContributorRole()) {
+            throw new RuntimeException("Access denied. Your role does not have permission to create.");
+        }
+        movie.setUsername(getAuthenticatedUsername());
+
         LocalDateTime now = LocalDateTime.now();
 
         movie.setCreateTime(now);
         movie.setUpdateTime(now);
 
-        String username = securityContext.getCallerPrincipal().getName();
-        movie.setUsername(username);
-
         movieRepository.insert(movie);
     }
 
     public void updateMovie(Movie movie) {
+        if (!isAuthenticated()) {
+            throw new RuntimeException("Access denied. Please login first.");
+        }
+        if (!hasContributorRole()) {
+            throw new RuntimeException("Access denied. Your role does not have permission to create.");
+        }
+        if (!movie.getUsername().equalsIgnoreCase(getAuthenticatedUsername())) {
+            throw new RuntimeException("Access denied. You are allowed to edit another users data");
+        }
+
         movie.setUpdateTime(LocalDateTime.now());
 
         movieRepository.update(movie);
     }
 
     public void deleteMovie(Movie movie) {
-        String username = securityContext.getCallerPrincipal().getName();
-        if (username.equalsIgnoreCase("anonymous") ) {
-            throw new RuntimeException("Access Denied. Anonymous users do not have permission to access this method.");
+        if (!isAuthenticated()) {
+            throw new RuntimeException("Access denied. Please login first.");
         }
-        boolean hasRequiredRoles = securityContext.isCallerInRole("Administration");
-        if (!hasRequiredRoles) {
-            throw new RuntimeException("Access denied. You role does not have permission to access this method.");
+        if (!hasAdministratorRole()) {
+            throw new RuntimeException("Access denied. Your role does have delete permission");
         }
         movieRepository.delete(movie);
     }
 
     public Optional<Movie> findMovieById(Long movieId) {
-        return movieRepository.findOptionalById(movieId);
+        if (!isAuthenticated()) {
+            throw new RuntimeException("Access denied. Please login first.");
+        }
+        Optional<Movie> maybeMovie = movieRepository.findOptionalById(movieId);
+//        if (!maybeMovie.orElseThrow().getUsername().equalsIgnoreCase(getAuthenticatedUsername())) {
+//            throw new RuntimeException("Access denied. You are not allowed to access data from another user.");
+//        }
+        if (!hasRequiredRoles()) {
+            throw new RuntimeException("Access denied. Your role does not have read permission");
+        }
+
+        return maybeMovie;
     }
 
     public List<Movie> getAllMovies() {
-        String username = securityContext.getCallerPrincipal().getName();
-        if (username.equalsIgnoreCase("anonymous") ) {
-            throw new RuntimeException("Access Denied. Anonymous users do not have permission to access this method.");
+        if (!isAuthenticated()) {
+            throw new RuntimeException("Access denied. Please login first.");
         }
-        boolean hasRequiredRoles = securityContext.isCallerInRole("Sales")
-                || securityContext.isCallerInRole("Administration");
-        if (!hasRequiredRoles) {
-            throw new RuntimeException("Access denied. You role does not have permission to access this method.");
+        if (!hasRequiredRoles()) {
+            throw new RuntimeException("Access denied. You role does not have permission to read.");
         }
-        boolean hasSalesRole = securityContext.isCallerInRole("Sales");
-        if (hasSalesRole) {
-            return movieRepository.findAllByUsername(username);
+        if (hasContributorRole()) {
+            return movieRepository.findAllByUsername(getAuthenticatedUsername());
         }
         return movieRepository.findAll();
     }

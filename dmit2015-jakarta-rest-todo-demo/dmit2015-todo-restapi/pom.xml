@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>dmit2015</groupId>
+    <artifactId>dmit2015-todo-restapi</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>dmit2015-todo-restapi</name>
+    <packaging>war</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <junit.version>6.1.3</junit.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-web-api</artifactId>
+            <version>11.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Required for IntelliJ/Maven compile recognition of @Inject and @Named with Jakarta EE 11 -->
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>2.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- MicroProfile Config is for reading configuration information from src/main/resources/META-INF/microprofile-config.properties file. -->
+        <dependency>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+            <version>3.1.2</version>
+        </dependency>
+
+        <!-- DataFaker is for creating fake data using a provider -->
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.48</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jakarta Data is new Jakarta EE 11 specification that simplifies data access using different database types (Relational and NoSQL). -->
+        <!-- To use with WildFly you must add an src/main/webapp/WEB-INFo/jboss-deployment-structure.xml file to exclude the default Hibernate module -->
+        <dependency>
+            <groupId>jakarta.data</groupId>
+            <artifactId>jakarta.data-api</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>7.4.14.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+            <version>7.4.14.Final</version>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.oracle.database.jdbc</groupId>-->
+        <!--            <artifactId>ojdbc17</artifactId>-->
+        <!--            <version>23.26.3.0.0</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.microsoft.sqlserver</groupId>-->
+        <!--            <artifactId>mssql-jdbc</artifactId>-->
+        <!--            <version>13.6.1.jre11</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.postgresql</groupId>-->
+        <!--            <artifactId>postgresql</artifactId>-->
+        <!--            <version>42.7.14</version>-->
+        <!--        </dependency>-->
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.5.252</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.6.3</version>
+        </dependency>
+
+        <!--  Logback Classic is intended as a successor to the log4j project. -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.6.6</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback.access</groupId>
+            <artifactId>common</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.26.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.6.3.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.22.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.22.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.27.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA)
+                   JPA from JUnit/TestNG -->
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <version>3.3.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <version>1.10.2.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
+            <version>10.0.0.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.arquillian</groupId>
+            <artifactId>wildfly-arquillian-container-managed</artifactId>
+            <version>5.1.0.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>3.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.5.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.16.0</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.48</version>
+                        </path>
+                        <path>
+                            <groupId>org.hibernate.orm</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>7.4.14.Final</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.6.3</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>6.2.0.Final</version>
+                <configuration>
+
+                    <feature-packs>
+                        <feature-pack>
+                            <location>wildfly@maven(org.jboss.universe:community-universe)#42.0.0.Final</location>
+                        </feature-pack>
+                    </feature-packs>
+
+                    <layers>
+                        <!-- https://docs.wildfly.org/40/WildFly_Maven_Plugin_Guide.html#wildfly_layers -->
+                        <layer>cloud-server</layer>
+                        <layer>microprofile-config</layer>
+                        <layer>microprofile-rest-client</layer>
+                        <layer>microprofile-openapi</layer>
+                    </layers>
+
+                    <!-- deploys the app on root web context -->
+                    <name>ROOT.war</name>
+
+                    <server-args>
+                        <server-arg>-Djboss.socket.binding.port-offset=10</server-arg>
+                        <server-arg>-b=0.0.0.0</server-arg>
+                    </server-args>
+                    <port>10000</port>
+
+                    <!--
+                        Debugging WildFly from IntelliJ IDEA
+
+                        WildFly Maven Plugin default debug port:
+                            8787
+
+                        IntelliJ IDEA's "Remote JVM Debug" run configuration often defaults to:
+                            5005
+
+                        The port is not special, but both sides must match:
+                            - WildFly must start with the selected debug port.
+                            - IntelliJ IDEA must attach using the same port.
+
+                        Current IntelliJ IDEA workflow:
+                            1. Open:
+                                   Run | Edit Configurations
+
+                            2. Click + and add a new run configuration:
+                                   Remote JVM Debug
+
+                            3. Configure:
+                                   Name: Debug WildFly
+                                   Host: localhost
+                                   Port: 8797
+
+                               Important:
+                                   IntelliJ may default the port to 5005.
+                                   Change it to 8787 unless you also changed the WildFly debug port.
+
+                            4. Start WildFly with debugging enabled.
+
+                            5. In IntelliJ IDEA, select the Remote JVM Debug run configuration.
+
+                            6. Start the debugger using:
+                                   Debug 'Debug WildFly'  (Shift+F9)
+
+                        Running multiple WildFly projects at the same time:
+                            Each running WildFly server must use a different debug port.
+
+                            Example:
+                                Project 1: 8787
+                                Project 2: 8788
+                                Project 3: 8789
+
+                            If you change the WildFly debug port, also create or update the matching
+                            IntelliJ IDEA "Remote JVM Debug" run configuration to use the same port.
+
+                        Example Maven plugin debug configuration:
+                            <debugPort>8787</debugPort>
+
+                        Example for a second WildFly project:
+                            <debugPort>8788</debugPort>
+                    -->
+                    <debug>true</debug>
+                    <debugPort>8797</debugPort>
+                    <!-- <debugSuspend>false</debugSuspend> -->
+
+                    <javaOpts>
+                        <!--                       <javaOpt>-Djboss.http.port=8090</javaOpt>-->
+                        <!--                       <javaOpt>-Djboss.https.port=8453</javaOpt>-->
+                        <!--                        <javaOpt>-Djboss.socket.binding.port-offset=10</javaOpt>-->
+                        <!--                        <javaOpt>-Djboss.management.http.port=10000</javaOpt>-->
+                        <javaOpt>-Xmx1024m</javaOpt>
+                    </javaOpts>
+
+                </configuration>
+            </plugin>
+
+            <!-- Plugin to run unit tests-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <argLine>-Xmx1024m</argLine>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin to run integration tests (Arquillian) -->
+            <!-- mvn verify -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

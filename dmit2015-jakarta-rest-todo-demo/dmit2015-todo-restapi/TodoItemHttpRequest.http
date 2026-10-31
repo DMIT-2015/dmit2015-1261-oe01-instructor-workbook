@@ -1,0 +1,40 @@
+### GET All returns a JSON array.
+GET http://localhost:8090/restapi/todos
+
+### GET One returns the requested record.
+GET http://localhost:8090/restapi/todos/1
+
+### POST creates a record and returns 201.
+POST http://localhost:8090/restapi/todos
+Content-Type: application/json
+
+{
+  "name": "Test REST API endpoints",
+  "complete": "false"
+}
+
+### PUT modifies an existing record.
+PUT http://localhost:8090/restapi/todos/4
+Content-Type: application/json
+
+{
+  "id": 4,
+  "name": "Finish testing REST API",
+  "complete": true
+}
+
+### DDELETE removes a record and returns 204.
+DELETE http://localhost:8090/restapi/todos/2
+
+### Requests for nonexistent records return 404 where appropriate.
+GET http://localhost:8090/restapi/todos/2
+
+### Update specific properties of the entity at the REST API endpoint
+PUT http://localhost:8090/restapi/todos/4
+Content-Type: application/json
+
+{
+  "id": 4,
+  "name": "   ",
+  "complete": true
+}

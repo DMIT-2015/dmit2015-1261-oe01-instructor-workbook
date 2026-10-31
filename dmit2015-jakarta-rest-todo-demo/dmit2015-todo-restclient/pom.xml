@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>dmit2015</groupId>
+    <artifactId>dmit2015-todo-restclient</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>dmit2015-todo-restclient</name>
+    <packaging>war</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <junit.version>6.1.3</junit.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-web-api</artifactId>
+            <version>11.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Required for IntelliJ/Maven compile recognition of @Inject and @Named with Jakarta EE 11 -->
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>2.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.microprofile</groupId>
+            <artifactId>microprofile</artifactId>
+            <version>7.1</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.48</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>16.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>primeflex</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.omnifaces</groupId>
+            <artifactId>omnifaces</artifactId>
+            <version>5.5.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>5.5.7</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>yasson</artifactId>
+            <version>3.0.4</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- The Jackson dependencies are needed by RESTAssured to prevent the error `java.lang.NoClassDefFoundError: javax/json/bind/Jsonb` -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.22.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.22.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.27.7</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.5.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.16.0</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.48</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>6.2.0.Final</version>
+                <configuration>
+                    <feature-packs>
+                        <feature-pack>
+                            <location>wildfly@maven(org.jboss.universe:community-universe)#42.0.0.Final</location>
+                        </feature-pack>
+                    </feature-packs>
+
+                    <layers>
+                        <!-- https://docs.wildfly.org/40/WildFly_Maven_Plugin_Guide.html#wildfly_layers -->
+                        <layer>ee-core-profile-server</layer>
+                        <layer>jsf</layer>
+                        <layer>microprofile-config</layer>
+                        <layer>microprofile-rest-client</layer>
+                    </layers>
+
+                    <!-- deploys the app on root web context -->
+                    <name>ROOT.war</name>
+
+                    <!--
+                        Debugging WildFly from IntelliJ IDEA
+
+                        WildFly Maven Plugin default debug port:
+                            8787
+
+                        IntelliJ IDEA's "Remote JVM Debug" run configuration often defaults to:
+                            5005
+
+                        The port is not special, but both sides must match:
+                            - WildFly must start with the selected debug port.
+                            - IntelliJ IDEA must attach using the same port.
+
+                        Current IntelliJ IDEA workflow:
+                            1. Open:
+                                   Run | Edit Configurations
+
+                            2. Click + and add a new run configuration:
+                                   Remote JVM Debug
+
+                            3. Configure:
+                                   Name: Debug WildFly
+                                   Host: localhost
+                                   Port: 8787
+
+                               Important:
+                                   IntelliJ may default the port to 5005.
+                                   Change it to 8787 unless you also changed the WildFly debug port.
+
+                            4. Start WildFly with debugging enabled.
+
+                            5. In IntelliJ IDEA, select the Remote JVM Debug run configuration.
+
+                            6. Start the debugger using:
+                                   Debug 'Debug WildFly'  (Shift+F9)
+
+                        Running multiple WildFly projects at the same time:
+                            Each running WildFly server must use a different debug port.
+
+                            Example:
+                                Project 1: 8787
+                                Project 2: 8788
+                                Project 3: 8789
+
+                            If you change the WildFly debug port, also create or update the matching
+                            IntelliJ IDEA "Remote JVM Debug" run configuration to use the same port.
+
+                        Example Maven plugin debug configuration:
+                            <debugPort>8787</debugPort>
+
+                        Example for a second WildFly project:
+                            <debugPort>8788</debugPort>
+                    -->
+                    <debug>true</debug>
+                    <debugPort>8787</debugPort>
+                    <!-- <debugSuspend>false</debugSuspend> -->
+
+                    <startupTimeout>120</startupTimeout>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

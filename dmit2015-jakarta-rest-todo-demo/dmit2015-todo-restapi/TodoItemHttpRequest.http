@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 
 ### DDELETE removes a record and returns 204.
-DELETE http://localhost:8090/restapi/todos/2
+DELETE http://localhost:8090/restapi/todos/4
 
 ### Requests for nonexistent records return 404 where appropriate.
 GET http://localhost:8090/restapi/todos/2

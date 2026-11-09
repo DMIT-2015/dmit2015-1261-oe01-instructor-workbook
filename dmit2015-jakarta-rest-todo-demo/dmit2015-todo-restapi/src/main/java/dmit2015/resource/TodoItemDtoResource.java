@@ -82,6 +82,7 @@ public class TodoItemDtoResource {
         // Returns an HTTP status of "201 Created" if the TodoItem was created.
         return Response
                 .created(location)
+                .entity(newTodoItem)
                 .build();
     }
 

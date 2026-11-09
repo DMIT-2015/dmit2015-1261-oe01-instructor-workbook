@@ -14,11 +14,22 @@
     <ui:define name="maincontent">
         <div class="card">
             <h1 role="heading" aria-level="1">DMIT2015 REST Client | Home</h1>
-            <h:form id="index_form" role="form">
-                <p:panel header="Welcome to DMIT2015 REST Client | Home">
-                    <!-- Add page-specific content here, e.g., PrimeFaces components -->
 
-                </p:panel>
+            <h2>OpenWeatherMap API</h2>
+
+            <h:form prependId="false">
+                <div class="formgroup-inline">
+                    <div class="field">
+
+                        <label for="city">City </label>
+                        <p:inputText id="city"
+                                     value="#{currentOpenWeatherApiClientView.city}"/>
+                        <p:commandButton id="submit"
+                                         value="Get Weather"
+                                         actionListener="#{currentOpenWeatherApiClientView.doSearchByCity()}"
+                                         ajax="false" />
+                    </div>
+                </div>
             </h:form>
         </div>
     </ui:define>

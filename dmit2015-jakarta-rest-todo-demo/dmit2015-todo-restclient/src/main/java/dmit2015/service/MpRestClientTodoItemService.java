@@ -21,17 +21,7 @@ public class MpRestClientTodoItemService implements TodoItemService {
 
     @Override
     public TodoItem createTodoItem(TodoItem todoItem) {
-        try (Response response = mpRestClient.create(todoItem)) {
-            if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
-                throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
-            } else {
-                String location = response.getHeaderString("Location");
-                int resourceIdIndex = location.lastIndexOf("/") + 1;
-                Long resourceId = Long.parseLong(location.substring(resourceIdIndex));
-                todoItem.setId(resourceId);
-            }
-        }
-        return todoItem;
+        return mpRestClient.create(todoItem);
     }
 
     @Override

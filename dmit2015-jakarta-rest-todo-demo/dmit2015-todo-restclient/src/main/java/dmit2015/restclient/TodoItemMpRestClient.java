@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface TodoItemMpRestClient {
 
     @POST
-    Response create(TodoItem newTodoItem);
+    TodoItem create(TodoItem newTodoItem);
 
     @GET
     List<TodoItem> findAll();

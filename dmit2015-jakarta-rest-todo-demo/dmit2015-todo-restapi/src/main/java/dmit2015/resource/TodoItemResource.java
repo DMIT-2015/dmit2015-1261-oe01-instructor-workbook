@@ -71,6 +71,7 @@ public class TodoItemResource {
         // Returns an HTTP status of "201 Created" if the TodoItem was successfully persisted
         return Response
                 .created(location)
+                .entity(newTodoItem)
                 .build();
     }
 

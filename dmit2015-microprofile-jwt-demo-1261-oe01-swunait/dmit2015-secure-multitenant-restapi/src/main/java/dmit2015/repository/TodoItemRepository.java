@@ -43,6 +43,12 @@ public class TodoItemRepository {
         return Optional.empty();
     }
 
+    public List<TodoItem> findAllByUsername(String username) {
+        return entityManager.createQuery("SELECT o FROM TodoItem o WHERE o.username = :uname", TodoItem.class)
+                .setParameter("uname", username)
+                .getResultList();
+    }
+
     public List<TodoItem> findAll() {
         return entityManager.createQuery("SELECT o FROM TodoItem o ", TodoItem.class)
                 .getResultList();

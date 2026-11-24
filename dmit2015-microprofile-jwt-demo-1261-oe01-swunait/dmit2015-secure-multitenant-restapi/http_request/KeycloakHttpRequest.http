@@ -1,0 +1,14 @@
+// Authorize Endpoint
+// {{server}}/auth/realms/{{realm}}/protocol/openid-connect/auth?response_type=code&client_id={{jwtClient}}
+// The token endpoint allows us to retrieve an access token, refresh token, or id token. OAuth 2.0 supports different grant types, like authorization_code, refresh_token, or password.
+// http://localhost:8180/realms/dmit2015-realm/protocol/openid-connect/token
+// https://stackoverflow.com/questions/75521972/keycloak-jwt-token-groups-missing
+### Token Request Endpoint
+POST {{keycloakserver}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+username={{user1_username}}&password={{user1_password}}&client_id={{jwtClient}}&client_secret={{jwtClientSecret}}&grant_type=password&scope=openid
+
+### UserInfo Request Endpoint
+GET {{keycloakserver}}/realms/{{realm}}/protocol/openid-connect/userinfo
+Authorization: Bearer {{user1_access_token}}

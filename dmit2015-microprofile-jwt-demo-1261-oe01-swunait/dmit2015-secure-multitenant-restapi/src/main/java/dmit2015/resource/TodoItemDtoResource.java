@@ -26,11 +26,20 @@ import java.util.stream.Collectors;
 public class TodoItemDtoResource {
 
     @Inject
+    @Claim(standard = Claims.upn)   // The username for the user.
+    private ClaimValue<Optional<String>> optionalUsername;
+
+    @Inject
+    @Claim(standard = Claims.groups)    // The roles that the subject is a member of.
+    private ClaimValue<Optional<Set<String>>> optionalGroups;
+
+    @Inject
     private UriInfo uriInfo;
 
     @Inject
     private TodoItemRepository todoItemRepository;
 
+    @RolesAllowed({"Sales","Shipping"})
     @POST   // POST: restapi/TodoItemsDto
     public Response postTodoItem(TodoItemDto dto) {
         if (dto == null) {
@@ -42,14 +51,18 @@ public class TodoItemDtoResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
         }
 
+        String username = optionalUsername.getValue().orElseThrow();
+
 //        TodoItem newTodoItem = mapFromDto(dto);
         TodoItem newTodoItem = TodoItemMapper.INSTANCE.toEntity(dto);
+        newTodoItem.setUsername(username);
         todoItemRepository.add(newTodoItem);
 
         URI todoItemsUri = uriInfo.getAbsolutePathBuilder().path(newTodoItem.getId().toString()).build();
         return Response.created(todoItemsUri).build();
     }
 
+    @RolesAllowed({"Sales","Shipping","Administration"})
     @GET    // GET: restapi/TodoItemsDto/5
     @Path("{id}")
     public Response getTodoItem(@PathParam("id") Long id) {
@@ -65,6 +78,7 @@ public class TodoItemDtoResource {
         return Response.ok(dto).build();
     }
 
+    @RolesAllowed({"Sales","Shipping","Administration"})
     @GET    // GET: restapi/TodoItemsDto
     public Response getTodoItems() {
         return Response.ok(todoItemRepository.findAll()
@@ -75,6 +89,7 @@ public class TodoItemDtoResource {
                 .build();
     }
 
+    @RolesAllowed({"Sales","Shipping"})
     @PUT    // PUT: restapi/TodoItemsDto/5
     @Path("{id}")
     public Response updateTodoItem(@PathParam("id") Long id, TodoItemDto dto) {
@@ -128,6 +143,7 @@ public class TodoItemDtoResource {
                 .build();
     }
 
+    @RolesAllowed({"Sales","Shipping"})
     @DELETE // DELETE: restapi/TodoItemsDto/5
     @Path("{id}")
     public Response deleteTodoItem(@PathParam("id") Long id) {

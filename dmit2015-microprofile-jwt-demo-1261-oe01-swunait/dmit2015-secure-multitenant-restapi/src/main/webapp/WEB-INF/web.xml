@@ -43,4 +43,10 @@
     </security-constraint>
     -->
 
+    <!-- To use security role annotations (@RolesAllowed, @PermitAll, @DenyAll) with JAX-RS in Wildfly,
+    you MUST set to "true" the context-param "resteasy.role.based.security" -->
+    <context-param>
+        <param-name>resteasy.role.based.security</param-name>
+        <param-value>true</param-value> <!-- Explicitly required to use @RolesAllowed, @PermitAll with JAX-RS -->
+    </context-param>
 </web-app>

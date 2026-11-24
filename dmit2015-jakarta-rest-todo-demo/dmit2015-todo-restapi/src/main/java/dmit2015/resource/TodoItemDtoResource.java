@@ -12,6 +12,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
 import java.net.URI;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -97,6 +98,12 @@ public class TodoItemDtoResource {
                 .findById(id)
                 .orElseThrow(NotFoundException::new);
 
+        if (!Objects.equals(existingTodoItem.getVersion(), dto.getVersion())) {
+            throw new ClientErrorException(
+                    "The data you are trying to update has changed since your last read request.",
+                    Response.Status.CONFLICT);
+        }
+
         TodoItem updatedTodoItem = TodoItemMapper.INSTANCE.toEntity(dto);
 
         String errorMessage = JavaBeanValidator.validateBean(updatedTodoItem);
@@ -116,19 +123,21 @@ public class TodoItemDtoResource {
         } catch (OptimisticLockException ex) {
             return Response
                     .status(Response.Status.CONFLICT)
-                    .entity("The data you are trying to update has changed since your last read request.")
+                    .entity("The data was modified by another transaction.")
                     .build();
         } catch (Exception ex) {
             // Return an HTTP status of "500 Internal Server Error" containing the exception message
             return Response.
                     serverError()
-                    .entity(ex.getMessage())
+                    .entity("An unexpected error occurred while updating the Todo item.")
                     .build();
         }
 
         // Returns an HTTP status "200 OK" and include in the body of the response the object that was updated
         TodoItemDto updatedDto = TodoItemMapper.INSTANCE.toDto(existingTodoItem);
-        return Response.ok(updatedDto).build();
+        return Response
+                .ok(updatedDto)
+                .build();
     }
 
     @DELETE            // This method only accepts HTTP DELETE requests.

@@ -9,6 +9,9 @@ Content-Type: application/x-www-form-urlencoded
 
 username={{user1_username}}&password={{user1_password}}&client_id={{jwtClient}}&client_secret={{jwtClientSecret}}&grant_type=password&scope=openid
 
+> {%
+   client.global.set("user1_access_token", response.body.access_token)
+ %}
 ### UserInfo Request Endpoint
 GET {{keycloakserver}}/realms/{{realm}}/protocol/openid-connect/userinfo
 Authorization: Bearer {{user1_access_token}}

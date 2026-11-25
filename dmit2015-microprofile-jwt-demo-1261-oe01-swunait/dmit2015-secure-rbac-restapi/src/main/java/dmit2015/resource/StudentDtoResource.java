@@ -90,7 +90,7 @@ public class StudentDtoResource {
                 .build();
     }
 
-    @RolesAllowed({"Sales","Shipping"})
+    @RolesAllowed({"Shipping","Administration"})
     @PUT            // This method only accepts HTTP PUT requests.
     @Path("{id}")    // This method accepts a path parameter and gives it a name of id
     public Response updateStudentStudent(@PathParam("id") Long id, StudentDto dto) {

@@ -1,128 +1,117 @@
-# DMIT2015 Secure REST Client Demo
+# DMIT2015 Secure RBAC REST API Demo
 
 ## Purpose
 
-This instructor demonstration project shows how a **Jakarta Faces REST client** can sign in through an OpenID Connect identity provider and call REST APIs protected by **MicroProfile JWT**.
+This instructor demonstration project shows how to secure Jakarta REST endpoints using **MicroProfile JWT** and **role-based access control (RBAC)**.
 
-It complements the secured `Student` and `TodoItem` REST APIs in this repository. The primary focus is the **client-side authentication workflow, JWT propagation, and error handling**; authorization decisions remain the responsibility of the APIs.
+The project uses `Student` REST endpoints to demonstrate how different operations can be restricted to different application roles. Student records are **not** owned by individual users in this example.
 
 ## Main Learning Objectives
 
 After reviewing this project, you should be able to explain how to:
 
-- Authenticate a user and obtain a JWT access token from an identity provider.
-- Maintain authentication state for the current user's server-side session.
-- Send `Authorization: Bearer <access_token>` on requests to **both** secured APIs.
-- Distinguish an unusable/expired token (`401`) from insufficient permission (`403`).
-- Preserve a valid login session when an operation is forbidden.
-- Clear local authentication state when logging out.
-- Keep authentication and API authorization responsibilities separate.
+- Require JWT authentication for REST API requests.
+- Read application roles from the JWT `groups` claim.
+- Use `@RolesAllowed` to restrict individual endpoints.
+- Distinguish authentication from authorization.
+- Test permitted and denied requests with valid JWTs.
+- Interpret common security responses such as `401 Unauthorized` and `403 Forbidden`.
 
-## Connected Services
+## Demo Roles
 
-| Service | Default port | Example resource |
-|---|---:|---|
-| OpenID Connect provider | Configured separately | Login and token issuance |
-| RBAC REST API | `8090` | `Student` |
-| Multitenant REST API | `8091` | `TodoItem` |
-| Jakarta Faces REST client | Check client configuration | Faces views |
+- `Sales`
+- `Shipping`
+- `Administration`
 
-| Service                 | Port                  | REST API resource path    |
-| ----------------------- | --------------------- | ------------------------- |
-| OpenID Connect provider | Configured separately | Login and token issuance |
-| RBAC REST API           | 8090                  | `/restapi/students`       |
-| Multitenant REST API    | 8091                  | `/restapi/todos`          |
-| REST Client             | Configured separately | Jakarta Faces application |
+These are example business roles. Role names and permission rules must be chosen for each application's requirements.
 
-## Authentication and Request Flow
+## Role Permissions
+
+Access is determined by the authenticated user's role, not by ownership of a `Student` record.
+
+### Sales
+
+Can retrieve all Students, retrieve a Student by ID, and create a Student. Cannot update or delete Students.
+
+### Shipping
+
+Can retrieve all Students, retrieve a Student by ID, and update a Student. Cannot create or delete Students.
+
+### Administration
+
+Can retrieve all Students, retrieve a Student by ID, create, update, and delete Students.
+
+### Endpoint Permission Summary
+
+| Operation | Sales | Shipping | Administration |
+|---|:---:|:---:|:---:|
+| Retrieve all Students | Allowed | Allowed | Allowed |
+| Retrieve Student by ID | Allowed | Allowed | Allowed |
+| Create Student | Allowed | Denied | Allowed |
+| Update Student | Denied | Allowed | Allowed |
+| Delete Student | Denied | Denied | Allowed |
+
+A denied operation with a **valid JWT** but insufficient role should return `403 Forbidden`.
+
+## Conceptual Model
 
 ```text
-User opens a secured Faces page
+Request to secured endpoint
   |
   v
-No usable login session? -- Yes --> Sign in through identity provider
-  |                                      |
-  No                                     v
-  |                                 Access token
-  +-------------------+------------------+
-                      |
-                      v
-             Jakarta Faces REST client
-                      |
-             Authorization: Bearer JWT
-                 /                \
-                v                  v
-          RBAC REST API      Multitenant REST API
-          Student             TodoItem
+Is the JWT present and valid?
+  |
+  +-- No --> Access denied (status depends on failure and server configuration)
+  |
+  +-- Yes
+       |
+       v
+    Does the user have a permitted role?
+       |
+       +-- No --> 403 Forbidden
+       |
+       +-- Yes --> Run the REST endpoint
 ```
 
-The API validates the JWT and decides whether each requested operation is permitted.
+With the WildFly configuration used in this course, an anonymous request to an `@RolesAllowed` endpoint may return `403 Forbidden`. An invalid or expired token normally results in `401 Unauthorized`.
 
-## JWT and Token Propagation
+## REST API Endpoint
 
-An access token used by the APIs should include the claims required by their configuration, such as:
+The REST API uses:
 
-- `upn` — authenticated username.
-- `groups` — application roles.
-- `exp` — token expiration time.
+- **Port:** `8090`
+- **Application path:** `/restapi`
+- **Resource path:** `/students`
 
-For secured REST calls, attach the access token as an HTTP header:
+Base resource URL (when deployed at the root context):
 
-```http
-Authorization: Bearer <access_token>
+```text
+http://localhost:8090/restapi/students
 ```
 
-The placeholder above is not a literal token. Pass the **current signed-in user's** access token to both APIs; do not use one hard-coded token for every user.
+The application deployment context path may add another URL segment.
 
-Keep tokens associated with the correct user's session. Do not display reusable tokens in a public page or application log.
-
-## Handling Authentication and Authorization Errors
-
-| Result | Meaning | REST client behavior |
-|---|---|---|
-| `401 Unauthorized` | The supplied token cannot be authenticated (for example, expired or invalid) | Clear or refresh unusable authentication state, then return the user to login |
-| `403 Forbidden` | The token is valid, but the user lacks the required role or record ownership | **Keep** the valid login session and show an access-denied message |
-| Successful response | JWT is accepted and the requested operation is permitted | Display or process the returned data |
-
-A request with **no JWT** is denied, but its exact HTTP status can depend on the WildFly security configuration. In the configuration used for these examples, anonymous access to an `@RolesAllowed` endpoint may return `403` rather than `401`.
-
-If the project uses a custom REST Client response mapper, check that a mapper intended for `403` handles only `403`, not every error status.
-
-## Logout
-
-Logging out of the client must clear its local authenticated session and stored access token. If the application integrates identity-provider logout, follow that configured flow as well. Clearing the client session and ending a single-sign-on session are related but distinct operations.
-
-## Running the Project
-
-1. Start the configured identity provider.
-2. Start the RBAC REST API (`8090`) and multitenant REST API (`8091`).
-3. Verify the REST client's configured service base URLs and identity-provider settings.
-4. From this project folder, start the application with the configured WildFly Maven plugin goal:
+Run the application using:
 
 ```bash
 mvn wildfly:dev
 ```
 
-5. Open the URL configured for this Faces application and sign in with a test account.
-
-Press `Ctrl+C` to stop WildFly. The REST client's port and deployment context path must be confirmed from its project configuration.
+Press `Ctrl+C` to stop WildFly.
 
 ## What to Observe During the Demo
 
-- What happens when an unauthenticated user navigates to a secured page.
-- How the app identifies the current user after login.
-- Where a REST request obtains the current user's token.
-- Whether calls to **both** APIs include the bearer token.
-- How the UI responds to a denied operation without signing out a valid user.
-- How an invalid or expired token returns the user to an authentication workflow.
-- What changes after logout and a subsequent attempt to access a secured page.
+- Where `@RolesAllowed` is applied to `Student` operations.
+- How a JWT's `groups` claim maps to application roles.
+- How permitted requests succeed and wrong-role requests fail.
+- Why denied-role tests should use a **valid JWT** with the wrong role rather than an anonymous request.
+- Why authorization belongs in the REST API even when a client hides unavailable actions.
 
 ## Practice
 
-1. Sign in with a `Sales` user and attempt both permitted and denied operations.
-2. Repeat with `Shipping` and `Administration` to see how the two APIs use roles differently.
-3. Confirm that a denied operation returning `403` does **not** remove a valid login session.
-4. Test an expired or invalid token and observe the `401` recovery path where supported by the server configuration.
-5. Sign out and verify that secured pages and APIs cannot continue using the previous local session.
+1. Obtain valid access tokens for test users with different roles.
+2. Call the same `Student` endpoint using each token.
+3. Compare permitted and denied `POST`, `PUT`, and `DELETE` results against the table.
+4. Try an expired or otherwise unusable token and compare its response with a wrong-role request.
 
-The central lesson is that the **client authenticates the user and forwards the JWT**, while **each API enforces its own role and ownership rules**.
+Apply the *pattern* to other APIs by defining their own roles and endpoint permissions, rather than copying this permission table unchanged.

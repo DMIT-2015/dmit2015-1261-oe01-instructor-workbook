@@ -12,6 +12,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class TodoItemDto implements Serializable {
 
+    private String username;
+
     private Long id;
 
     @NotBlank(message = "Name value cannot be blank.")

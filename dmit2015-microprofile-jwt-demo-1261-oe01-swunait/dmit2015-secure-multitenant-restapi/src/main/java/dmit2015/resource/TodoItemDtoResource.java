@@ -5,6 +5,7 @@ import dmit2015.dto.TodoItemDto;
 import dmit2015.mapper.TodoItemMapper;
 import dmit2015.entity.TodoItem;
 import dmit2015.repository.TodoItemRepository;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.OptimisticLockException;
@@ -12,10 +13,14 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
+import org.eclipse.microprofile.jwt.Claims;
 
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -51,11 +56,12 @@ public class TodoItemDtoResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
         }
 
-        String username = optionalUsername.getValue().orElseThrow();
-
 //        TodoItem newTodoItem = mapFromDto(dto);
         TodoItem newTodoItem = TodoItemMapper.INSTANCE.toEntity(dto);
+
+        String username = optionalUsername.getValue().orElseThrow();
         newTodoItem.setUsername(username);
+
         todoItemRepository.add(newTodoItem);
 
         URI todoItemsUri = uriInfo.getAbsolutePathBuilder().path(newTodoItem.getId().toString()).build();
@@ -71,8 +77,19 @@ public class TodoItemDtoResource {
         if (optionalTodoItem.isEmpty()) {
             throw new NotFoundException();
         }
+
         TodoItem existingTodoItem = optionalTodoItem.get();
 //        TodoItemDto dto = mapToDto(existingTodoItem);
+        // Verify own only access
+        Set<String> groups  = optionalGroups.getValue().orElseThrow();
+        if (!groups.contains("Administration")) {
+            String username = optionalUsername.getValue().orElseThrow();
+            if (!username.equalsIgnoreCase(existingTodoItem.getUsername())) {
+                throw new ForbiddenException();
+            }
+        }
+
+
         TodoItemDto dto = TodoItemMapper.INSTANCE.toDto(existingTodoItem);
 
         return Response.ok(dto).build();
@@ -81,12 +98,22 @@ public class TodoItemDtoResource {
     @RolesAllowed({"Sales","Shipping","Administration"})
     @GET    // GET: restapi/TodoItemsDto
     public Response getTodoItems() {
-        return Response.ok(todoItemRepository.findAll()
-                .stream()
-//                .map(this::mapToDto)
-                .map(TodoItemMapper.INSTANCE::toDto)
-                .collect(Collectors.toList()))
-                .build();
+        Set<String> groups  = optionalGroups.getValue().orElseThrow();
+        if (groups.contains("Administration")) {
+            return Response.ok(todoItemRepository.findAll()
+                            .stream()
+                            .map(TodoItemMapper.INSTANCE::toDto)
+                            .collect(Collectors.toList()))
+                    .build();
+        } else {
+            String username = optionalUsername.getValue().orElseThrow();
+            return Response.ok(todoItemRepository.findAllByUsername(username)
+                            .stream()
+                            .map(TodoItemMapper.INSTANCE::toDto)
+                            .collect(Collectors.toList()))
+                    .build();
+        }
+
     }
 
     @RolesAllowed({"Sales","Shipping"})
@@ -110,6 +137,12 @@ public class TodoItemDtoResource {
         }
 
         TodoItem existingTodoItem = optionalTodoItem.orElseThrow();
+
+        // Verify user own only access
+        String username = optionalUsername.getValue().orElseThrow();
+        if (!username.equalsIgnoreCase(existingTodoItem.getUsername())) {
+            throw new ForbiddenException();
+        }
 
         if (!Objects.equals(existingTodoItem.getVersion(), dto.getVersion())) {
             throw new ClientErrorException(
@@ -151,6 +184,12 @@ public class TodoItemDtoResource {
 
         if (optionalTodoItem.isEmpty()) {
             throw new NotFoundException();
+        }
+
+        String username = optionalUsername.getValue().orElseThrow();
+        TodoItem existingTodoItem = optionalTodoItem.orElseThrow();
+        if (!username.equalsIgnoreCase(existingTodoItem.getUsername())) {
+            throw new ForbiddenException();
         }
 
         todoItemRepository.deleteById(id);

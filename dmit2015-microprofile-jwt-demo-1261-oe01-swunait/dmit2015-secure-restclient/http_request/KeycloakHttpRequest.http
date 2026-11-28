@@ -1,17 +1,51 @@
-// Authorize Endpoint
-// {{server}}/auth/realms/{{realm}}/protocol/openid-connect/auth?response_type=code&client_id={{jwtClient}}
-// The token endpoint allows us to retrieve an access token, refresh token, or id token. OAuth 2.0 supports different grant types, like authorization_code, refresh_token, or password.
-// http://localhost:8180/realms/dmit2015-realm/protocol/openid-connect/token
-// https://stackoverflow.com/questions/75521972/keycloak-jwt-token-groups-missing
-### Token Request Endpoint
+
+### 1. Request Access Token
 POST {{keycloakserver}}/realms/{{realm}}/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
 username={{user1_username}}&password={{user1_password}}&client_id={{jwtClient}}&client_secret={{jwtClientSecret}}&grant_type=password&scope=openid
 
 > {%
-   client.global.set("user1_access_token", response.body.access_token)
- %}
-### UserInfo Request Endpoint
+    if (response.status === 200) {
+        client.global.set("user1_access_token", response.body.access_token);
+        client.global.set("user1_refresh_token", response.body.refresh_token);
+    }
+%}
+
+
+### 2. Get Authenticated User Information
 GET {{keycloakserver}}/realms/{{realm}}/protocol/openid-connect/userinfo
+Authorization: Bearer {{user1_access_token}}
+
+
+### 3. Check Access Token Status
+# Expected: "active": true for a valid token with the required audience.
+POST {{keycloakserver}}/realms/{{realm}}/protocol/openid-connect/token/introspect
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{jwtClient}}&client_secret={{jwtClientSecret}}&token={{user1_access_token}}&token_type_hint=access_token
+
+
+### 4. Call Secured REST API
+# Change the URL to the REST API you want to test.
+GET http://localhost:8090/restapi/students
+Authorization: Bearer {{user1_access_token}}
+
+
+### 5. Logout
+# Ends the Keycloak session associated with the refresh token.
+POST {{keycloakserver}}/realms/{{realm}}/protocol/openid-connect/logout
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{jwtClient}}&client_secret={{jwtClientSecret}}&refresh_token={{user1_refresh_token}}
+
+
+### 6. Test Access Token After Logout
+# Reuse the original access token after logging out.
+#
+# The API may still return HTTP 200 OK until the JWT expires.
+# MicroProfile JWT validates the token locally without
+# contacting Keycloak to check whether the user logged out.
+
+GET http://localhost:8090/restapi/students
 Authorization: Bearer {{user1_access_token}}

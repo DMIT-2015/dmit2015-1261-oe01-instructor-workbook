@@ -19,12 +19,12 @@ import java.util.Map;
  * You can register this provider class in a MicroProfile REST Client interface by applying the `@RegisterProvider`
  * annotation.
  * {@snippet :
- * @RegisterProvider(TodoItemRestApiResponseMapper.class)
+ * @RegisterProvider(BadRequestResponseMapper.class)
  * @RegisterRestClient
- * public interface TodoItemMpRestClient { }
- * }
+ * public interface TodoItemMpRestClient {}
+ *}
  */
-public class TodoItemRestApiResponseMapper implements ResponseExceptionMapper<WebApplicationException> {
+public class BadRequestResponseMapper implements ResponseExceptionMapper<WebApplicationException> {
     @Override
     public WebApplicationException toThrowable(Response response) {
         String responseBodyJson = response.readEntity(String.class);

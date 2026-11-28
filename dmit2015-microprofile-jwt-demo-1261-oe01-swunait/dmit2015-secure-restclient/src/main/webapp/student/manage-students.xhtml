@@ -20,6 +20,12 @@
               value=".Students-table-header { display: flex; align-items:center; justify-content: space-between; flex-wrap: wrap; }"/>
 
     <ui:define name="maincontent">
+        <f:metadata>
+            <f:viewAction action="#{loginSession.checkForToken}" />
+            <f:viewParam name="dummy" />
+            <f:event type="postInvokeAction"
+                     listener="#{currentStudentCrudView.init}" />
+        </f:metadata>
 
         <div class="card">
             <h:form id="form">

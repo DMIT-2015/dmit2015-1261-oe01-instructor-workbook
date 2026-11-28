@@ -19,6 +19,12 @@
     <ui:param name="internalstyles" value=".TodoItemDtos-table-header { display: flex; align-items:center; justify-content: space-between; flex-wrap: wrap; }" />
 
     <ui:define name="maincontent">
+        <f:metadata>
+            <f:viewAction action="#{loginSession.checkForToken}" />
+            <f:viewParam name="dummy" />
+            <f:event type="postInvokeAction"
+                     listener="#{currentTodoItemDtoCrudView.init}" />
+        </f:metadata>
 
         <div class="card">
             <h:form id="form" >
@@ -60,6 +66,9 @@
                         </div>
                     </f:facet>
 
+                    <p:column headerText="Username">
+                        <h:outputText value="#{currentItem.username}" />
+                    </p:column>
                     <p:column headerText="Name" filterBy="#{currentItem.name}">
                         <h:outputText value="#{currentItem.name}" />
                     </p:column>

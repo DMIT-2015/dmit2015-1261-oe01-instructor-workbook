@@ -10,6 +10,8 @@ import net.datafaker.Faker;
 @AllArgsConstructor
 public class TodoItemDto {
 
+    private String username;
+
     private Long id;
 
     private String name;
